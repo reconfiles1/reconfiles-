@@ -1,0 +1,28 @@
+# ReconFiles
+
+> Free, browser-based CSV reconciliation tool. Match two CSV files on a shared key (payment reference, invoice number, or transaction ID), identify discrepancies, and export results to a multi-sheet Excel workbook. All processing happens client-side — no files are uploaded to any server.
+
+ReconFiles is built for finance, accounting, and operations teams who need to reconcile records between two systems — for example, matching a Stripe or GoCardless payout export against a Salesforce, Xero, or other accounting system report.
+
+## Core capabilities
+
+- Match two CSV files on any shared key column (payment reference, invoice number, transaction ID, etc.)
+- Auto-detect the best matching columns by analysing actual data overlap, not just column names
+- Handle multiple rows per key (e.g. a single payment split across several invoice lines) by summing amounts
+- Foreign currency tolerance: configurable absolute (£) and percentage (%) thresholds so small FX rate differences between systems don't trigger false mismatches
+- Export to a multi-sheet Excel workbook with live VLOOKUP formulas linking the two source sheets, mirroring a manual reconciliation layout
+- Save and reuse column mapping configurations between sessions
+- Mark "only in File A" rows for exclusion before export
+- No account, no signup, no cost
+
+## Privacy
+
+All file processing happens in the user's browser using JavaScript. No file content is ever transmitted to a server. ReconFiles has no backend and cannot access user data.
+
+## Pages
+
+- [Homepage](https://reconfiles.co.uk/): the reconciliation tool itself, with an explanation of features and usage instructions.
+
+## Contact
+
+reconfiles.co.uk
