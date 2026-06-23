@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="description" content="Free online PDF merger. Combine multiple PDFs into one file, drag to reorder, and download instantly — all in your browser. Nothing uploaded.">
+<link rel="canonical" href="https://reconfiles.co.uk/pdf-merger.html">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PDF Merger — ReconFiles</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Hanken+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #F1EEE4;
+    --surface: #FBFAF5;
+    --border: #D9D5C6;
+    --border-strong: #C5C0AD;
+    --text-primary: #1B1A15;
+    --text-secondary: #6E6C61;
+    --text-hint: #9B998D;
+    --accent: #15573B;
+    --accent-light: #E2EFE7;
+    --accent-text: #0F4530;
+    --danger: #BC3B2B;
+    --danger-light: #F4E2DE;
+    --success: #1F7A52;
+    --success-light: #E2EFE7;
+    --radius: 14px;
+    --radius-sm: 9px;
+    --shadow: 0 1px 2px rgba(27,26,21,.04), 0 8px 24px -12px rgba(27,26,21,.18);
+    --shadow-lg: 0 4px 24px rgba(27,26,21,.12);
+  }
+
+  body {
+    font-family: 'Hanken Grotesk', sans-serif;
+    background: var(--bg);
+    background-image: radial-gradient(#D9D5C6 .6px, transparent .6px);
+    background-size: 22px 22px;
+    color: var(--text-primary);
+    min-height: 100vh;
+    padding: 0;
+    font-size: 15px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── Header ── */
+  header {
+    background: var(--surface);
+    border-bottom: 2px solid var(--text-primary);
+    padding: 0 2rem;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  .logo-mark {
+    width: 14px; height: 14px;
+    background: var(--accent);
+    border-radius: 50%;
+    display: inline-block;
+    flex-shrink: 0;
+    box-shadow: 0 0 0 5px var(--accent-light);
+  }
+  .logo-name {
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-size: 1.6rem; font-weight: 800; letter-spacing: -0.03em;
+    color: var(--text-primary); line-height: 1;
+  }
+  .logo-sub {
+    font-size: .78rem; color: var(--text-hint); font-weight: 500;
+    margin-left: 2px;
+  }
+  .logo-tag { font-size: 12px; color: var(--text-hint); margin-left: auto; }
+  .nav-back {
+    margin-left: auto;
+    display: inline-flex; align-items: center;
+    font-family: 'Hanken Grotesk', sans-serif; font-size: .82rem; font-weight: 600;
+    color: var(--accent); text-decoration: none; white-space: nowrap;
+    border: 1px solid var(--accent); border-radius: 8px;
+    padding: 6px 13px; transition: .15s; flex-shrink: 0;
+  }
+  .nav-back:hover { background: var(--accent-light); }
+
+  /* ── Main layout ── */
+  main {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 3rem 1.5rem 4rem;
+  }
+
+  /* ── Hero ── */
+  .hero { text-align: center; margin-bottom: 2.5rem; }
+  .hero h1 {
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-size: 2rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.15;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+  }
+  .hero p {
+    color: var(--text-secondary);
+    font-size: 15px;
+  }
+
+  /* ── Drop zone ── */
+  .dropzone {
+    background: var(--surface);
+    border: 1.5px dashed var(--border-strong);
+    border-radius: var(--radius);
+    padding: 2.5rem 2rem;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+    margin-bottom: 1.5rem;
+    position: relative;
+  }
+  .dropzone:hover, .dropzone.drag-over {
+    border-color: var(--accent);
+    background: var(--accent-light);
+  }
+  .dropzone input[type="file"] {
+    position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
+  }
+  .dz-icon { margin: 0 auto 12px; opacity: 0.35; }
+  .dz-title { font-size: 15px; font-weight: 500; color: var(--text-primary); margin-bottom: 4px; }
+  .dz-sub { font-size: 13px; color: var(--text-hint); }
+  .dz-btn {
+    display: inline-block;
+    margin-top: 14px;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius-sm);
+    padding: 8px 18px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    pointer-events: none;
+  }
+
+  /* ── File list ── */
+  .file-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 1.5rem; }
+
+  .file-item {
+    background: var(--surface);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: var(--shadow);
+    transition: box-shadow 0.15s;
+    cursor: grab;
+    user-select: none;
+  }
+  .file-item:active { cursor: grabbing; }
+  .file-item.dragging { opacity: 0.4; box-shadow: none; }
+  .file-item.drop-target { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-light); }
+
+  .file-thumb {
+    width: 36px; height: 44px;
+    background: var(--accent-light);
+    border-radius: 5px;
+    border: 0.5px solid rgba(44,95,246,0.18);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    position: relative;
+    overflow: hidden;
+  }
+  .file-thumb canvas { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .file-thumb-icon { color: var(--accent); font-size: 18px; }
+
+  .file-info { flex: 1; min-width: 0; }
+  .file-name {
+    font-size: 13px; font-weight: 500;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    color: var(--text-primary);
+  }
+  .file-meta { font-size: 12px; color: var(--text-hint); margin-top: 1px; }
+
+  .file-order {
+    width: 22px; height: 22px;
+    background: var(--bg);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 600; color: var(--text-secondary);
+    flex-shrink: 0;
+  }
+
+  .btn-icon {
+    width: 30px; height: 30px;
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: transparent;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--text-secondary);
+    transition: background 0.1s, color 0.1s;
+    flex-shrink: 0;
+  }
+  .btn-icon:hover { background: var(--danger-light); color: var(--danger); border-color: rgba(192,57,43,0.2); }
+  .drag-handle { color: var(--text-hint); cursor: grab; flex-shrink: 0; }
+
+  /* ── Move buttons ── */
+  .move-btns { display: flex; flex-direction: column; gap: 3px; }
+  .move-btns button {
+    width: 20px; height: 20px;
+    border: none; background: transparent; cursor: pointer;
+    color: var(--text-hint); border-radius: 3px;
+    display: flex; align-items: center; justify-content: center;
+    padding: 0;
+    transition: background 0.1s, color 0.1s;
+  }
+  .move-btns button:hover:not(:disabled) { background: var(--bg); color: var(--text-primary); }
+  .move-btns button:disabled { opacity: 0.25; cursor: default; }
+
+  /* ── Add more ── */
+  .add-more-btn {
+    width: 100%;
+    background: transparent;
+    border: 0.5px dashed var(--border-strong);
+    border-radius: var(--radius);
+    padding: 10px;
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--text-secondary);
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+    transition: background 0.1s, border-color 0.1s, color 0.1s;
+    position: relative;
+    margin-bottom: 1.5rem;
+  }
+  .add-more-btn input[type="file"] {
+    position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%;
+  }
+  .add-more-btn:hover { background: var(--accent-light); border-color: var(--accent); color: var(--accent-text); }
+
+  /* ── Options panel ── */
+  .options-panel {
+    background: var(--surface);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.5rem;
+    box-shadow: var(--shadow);
+  }
+  .options-title { font-size: 13px; font-weight: 500; color: var(--text-secondary); margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+  .options-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .options-row label { font-size: 13px; color: var(--text-secondary); display: flex; align-items: center; gap: 6px; cursor: pointer; }
+  .options-row input[type="checkbox"] { accent-color: var(--accent); width: 14px; height: 14px; }
+  .filename-input {
+    flex: 1; min-width: 180px;
+    border: 0.5px solid var(--border-strong);
+    border-radius: var(--radius-sm);
+    padding: 6px 10px;
+    font-size: 13px;
+    color: var(--text-primary);
+    background: var(--bg);
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .filename-input:focus { border-color: var(--accent); background: var(--surface); }
+  .filename-suffix { font-size: 13px; color: var(--text-hint); }
+
+  /* ── Merge button ── */
+  .merge-btn {
+    width: 100%;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius);
+    padding: 14px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    transition: background 0.15s, transform 0.1s;
+    letter-spacing: -0.01em;
+  }
+  .merge-btn:hover:not(:disabled) { background: #1741C4; }
+  .merge-btn:active:not(:disabled) { transform: scale(0.99); }
+  .merge-btn:disabled { background: var(--text-hint); cursor: not-allowed; }
+
+  /* ── Progress ── */
+  .progress-bar-wrap {
+    width: 100%; height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-top: 12px;
+    display: none;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 2px;
+    width: 0%;
+    transition: width 0.2s;
+  }
+
+  /* ── Toast ── */
+  .toast {
+    position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%) translateY(20px);
+    background: var(--text-primary); color: #fff;
+    padding: 10px 18px; border-radius: var(--radius);
+    font-size: 13px; font-weight: 500;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.2s, transform 0.2s;
+    z-index: 100;
+    white-space: nowrap;
+    box-shadow: var(--shadow-lg);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  .toast.success { background: var(--success); }
+  .toast.error { background: var(--danger); }
+
+  /* ── Empty state / info ── */
+  .hint {
+    text-align: center;
+    padding: 2rem 0;
+    color: var(--text-hint);
+    font-size: 13px;
+  }
+  .privacy-note {
+    text-align: center;
+    font-size: 12px;
+    color: var(--text-hint);
+    margin-top: 1.5rem;
+    display: flex; align-items: center; justify-content: center; gap: 5px;
+  }
+
+  @media (max-width: 600px) {
+    main { padding: 2rem 1rem 3rem; }
+    .hero h1 { font-size: 1.5rem; }
+    header { padding: 0 1rem; }
+    .logo-tag { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <span class="logo-mark"></span>
+  <span class="logo-name">ReconFiles</span>
+  <span class="logo-sub">PDF Merger</span>
+  <a href="index.html" class="nav-back">← CSV Reconciliation</a>
+</header>
+
+<main>
+  <div class="hero">
+    <h1>Merge PDFs in seconds</h1>
+    <p>Drag to reorder, then download your combined file. Nothing is uploaded to any server.</p>
+  </div>
+
+  <!-- Drop zone (shown when no files) -->
+  <div class="dropzone" id="dropzone">
+    <input type="file" accept="application/pdf" multiple id="fileInput" />
+    <svg class="dz-icon" width="40" height="40" viewBox="0 0 40 40" fill="none">
+      <rect x="6" y="4" width="18" height="24" rx="3" fill="#D3D1C7"/>
+      <rect x="16" y="12" width="18" height="24" rx="3" fill="#B4B2A9"/>
+      <path d="M22 26l4-4 4 4M26 22v10" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+    </svg>
+    <div class="dz-title">Drop PDF files here</div>
+    <div class="dz-sub">or click to browse</div>
+    <div class="dz-btn">Choose files</div>
+  </div>
+
+  <!-- File list (shown after files added) -->
+  <div class="file-list" id="fileList"></div>
+
+  <!-- Add more (shown when files exist) -->
+  <button class="add-more-btn" id="addMoreBtn" style="display:none;">
+    <input type="file" accept="application/pdf" multiple id="addMoreInput" />
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><line x1="7" y1="2" x2="7" y2="12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="2" y1="7" x2="12" y2="7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+    Add more PDFs
+  </button>
+
+  <!-- Options -->
+  <div class="options-panel" id="optionsPanel" style="display:none;">
+    <div class="options-title">
+      <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><circle cx="6.5" cy="6.5" r="5.5" stroke="currentColor" stroke-width="1"/><line x1="6.5" y1="5" x2="6.5" y2="9" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><circle cx="6.5" cy="3.5" r="0.6" fill="currentColor"/></svg>
+      Output options
+    </div>
+    <div class="options-row">
+      <label>
+        <input type="checkbox" id="addBookmarks" checked />
+        Add bookmarks for each file
+      </label>
+      <div style="flex:1; min-width:180px; display:flex; align-items:center; gap:6px;">
+        <input type="text" class="filename-input" id="filenameInput" value="merged" placeholder="Output filename" maxlength="80" />
+        <span class="filename-suffix">.pdf</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Merge button -->
+  <button class="merge-btn" id="mergeBtn" disabled>
+    <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+      <rect x="2" y="2" width="7" height="10" rx="1.5" fill="white" opacity="0.8"/>
+      <rect x="9" y="6" width="7" height="10" rx="1.5" fill="white" opacity="0.6"/>
+      <path d="M6 14l3 3 3-3" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <line x1="9" y1="17" x2="9" y2="11" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+    </svg>
+    <span id="mergeBtnText">Merge PDFs</span>
+  </button>
+
+  <div class="progress-bar-wrap" id="progressWrap">
+    <div class="progress-bar-fill" id="progressFill"></div>
+  </div>
+
+  <div class="privacy-note">
+    <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 1L1.5 3v3c0 2.5 2 4.5 4.5 5.5C8.5 10.5 10.5 8.5 10.5 6V3L6 1z" stroke="currentColor" stroke-width="1"/></svg>
+    Your files never leave your device — all processing happens locally in your browser.
+  </div>
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+<script>
+// ── State ──
+let files = []; // {file: File, name: str, pages: number, id: number}
+let idCounter = 0;
+let dragSrcId = null;
+
+// ── Elements ──
+const dropzone = document.getElementById('dropzone');
+const fileInput = document.getElementById('fileInput');
+const fileListEl = document.getElementById('fileList');
+const addMoreBtn = document.getElementById('addMoreBtn');
+const addMoreInput = document.getElementById('addMoreInput');
+const optionsPanel = document.getElementById('optionsPanel');
+const mergeBtn = document.getElementById('mergeBtn');
+const mergeBtnText = document.getElementById('mergeBtnText');
+const progressWrap = document.getElementById('progressWrap');
+const progressFill = document.getElementById('progressFill');
+const filenameInput = document.getElementById('filenameInput');
+const toastEl = document.getElementById('toast');
+const addBookmarksCheck = document.getElementById('addBookmarks');
+
+// ── Toast ──
+let toastTimer;
+function showToast(msg, type='') {
+  toastEl.textContent = msg;
+  toastEl.className = 'toast show' + (type ? ' ' + type : '');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { toastEl.className = 'toast'; }, 3500);
+}
+
+// ── File handling ──
+function formatBytes(bytes) {
+  if (bytes < 1024) return bytes + ' B';
+  if (bytes < 1048576) return (bytes/1024).toFixed(0) + ' KB';
+  return (bytes/1048576).toFixed(1) + ' MB';
+}
+
+async function getPdfPageCount(file) {
+  try {
+    const buf = await file.arrayBuffer();
+    const pdf = await PDFLib.PDFDocument.load(buf, { ignoreEncryption: true });
+    return pdf.getPageCount();
+  } catch { return null; }
+}
+
+async function addFiles(newFiles) {
+  const pdfFiles = Array.from(newFiles).filter(f => f.type === 'application/pdf' || f.name.endsWith('.pdf'));
+  if (pdfFiles.length === 0) { showToast('Please select PDF files only.', 'error'); return; }
+
+  for (const file of pdfFiles) {
+    const pages = await getPdfPageCount(file);
+    if (pages === null) { showToast(`Could not read "${file.name}" — it may be password-protected.`, 'error'); continue; }
+    files.push({ file, name: file.name.replace(/\.pdf$/i, ''), id: idCounter++, pages, size: file.size });
+  }
+  renderList();
+}
+
+function removeFile(id) {
+  files = files.filter(f => f.id !== id);
+  renderList();
+}
+
+function moveFile(id, dir) {
+  const idx = files.findIndex(f => f.id === id);
+  if (idx === -1) return;
+  const newIdx = idx + dir;
+  if (newIdx < 0 || newIdx >= files.length) return;
+  [files[idx], files[newIdx]] = [files[newIdx], files[idx]];
+  renderList();
+}
+
+// ── Render ──
+function renderList() {
+  const hasFiles = files.length > 0;
+  dropzone.style.display = hasFiles ? 'none' : 'block';
+  addMoreBtn.style.display = hasFiles ? 'flex' : 'none';
+  optionsPanel.style.display = hasFiles ? 'block' : 'none';
+  mergeBtn.disabled = files.length < 2;
+  mergeBtnText.textContent = files.length < 2
+    ? (files.length === 1 ? 'Add at least one more PDF' : 'Merge PDFs')
+    : `Merge ${files.length} PDFs`;
+
+  fileListEl.innerHTML = '';
+  files.forEach((f, idx) => {
+    const item = document.createElement('div');
+    item.className = 'file-item';
+    item.dataset.id = f.id;
+    item.draggable = true;
+
+    const pageWord = f.pages === 1 ? 'page' : 'pages';
+
+    item.innerHTML = `
+      <div class="drag-handle" title="Drag to reorder">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+          <circle cx="4.5" cy="4" r="1.2" fill="currentColor"/>
+          <circle cx="9.5" cy="4" r="1.2" fill="currentColor"/>
+          <circle cx="4.5" cy="7" r="1.2" fill="currentColor"/>
+          <circle cx="9.5" cy="7" r="1.2" fill="currentColor"/>
+          <circle cx="4.5" cy="10" r="1.2" fill="currentColor"/>
+          <circle cx="9.5" cy="10" r="1.2" fill="currentColor"/>
+        </svg>
+      </div>
+      <div class="file-order">${idx + 1}</div>
+      <div class="file-thumb">
+        <svg width="18" height="20" viewBox="0 0 18 20" fill="none">
+          <rect x="1" y="1" width="12" height="16" rx="2" fill="#EDF1FE" stroke="#2C5FF6" stroke-width="0.8" opacity="0.7"/>
+          <path d="M7 1v4h6" fill="none" stroke="#2C5FF6" stroke-width="0.8" opacity="0.5"/>
+          <line x1="3.5" y1="9" x2="10.5" y2="9" stroke="#2C5FF6" stroke-width="0.8" opacity="0.5"/>
+          <line x1="3.5" y1="11.5" x2="10.5" y2="11.5" stroke="#2C5FF6" stroke-width="0.8" opacity="0.5"/>
+          <line x1="3.5" y1="14" x2="8" y2="14" stroke="#2C5FF6" stroke-width="0.8" opacity="0.5"/>
+        </svg>
+      </div>
+      <div class="file-info">
+        <div class="file-name" title="${f.name}.pdf">${f.name}.pdf</div>
+        <div class="file-meta">${f.pages} ${pageWord} · ${formatBytes(f.size)}</div>
+      </div>
+      <div class="move-btns">
+        <button title="Move up" data-dir="-1" data-id="${f.id}" ${idx === 0 ? 'disabled' : ''}>
+          <svg width="10" height="10" viewBox="0 0 10 10"><path d="M2 7l3-4 3 4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+        </button>
+        <button title="Move down" data-dir="1" data-id="${f.id}" ${idx === files.length-1 ? 'disabled' : ''}>
+          <svg width="10" height="10" viewBox="0 0 10 10"><path d="M2 3l3 4 3-4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+        </button>
+      </div>
+      <button class="btn-icon" title="Remove" data-remove="${f.id}" aria-label="Remove ${f.name}">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 2l8 8M10 2L2 10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </button>
+    `;
+
+    // Move buttons
+    item.querySelectorAll('.move-btns button').forEach(btn => {
+      btn.addEventListener('click', e => {
+        e.stopPropagation();
+        moveFile(parseInt(btn.dataset.id), parseInt(btn.dataset.dir));
+      });
+    });
+
+    // Remove button
+    item.querySelector('[data-remove]').addEventListener('click', e => {
+      e.stopPropagation();
+      removeFile(parseInt(item.querySelector('[data-remove]').dataset.remove));
+    });
+
+    // Drag events
+    item.addEventListener('dragstart', e => {
+      dragSrcId = f.id;
+      item.classList.add('dragging');
+      e.dataTransfer.effectAllowed = 'move';
+    });
+    item.addEventListener('dragend', () => { item.classList.remove('dragging'); clearDragTargets(); });
+    item.addEventListener('dragover', e => { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; item.classList.add('drop-target'); });
+    item.addEventListener('dragleave', () => item.classList.remove('drop-target'));
+    item.addEventListener('drop', e => {
+      e.preventDefault();
+      item.classList.remove('drop-target');
+      if (dragSrcId === null || dragSrcId === f.id) return;
+      const srcIdx = files.findIndex(x => x.id === dragSrcId);
+      const tgtIdx = files.findIndex(x => x.id === f.id);
+      const [moved] = files.splice(srcIdx, 1);
+      files.splice(tgtIdx, 0, moved);
+      dragSrcId = null;
+      renderList();
+    });
+
+    fileListEl.appendChild(item);
+  });
+}
+
+function clearDragTargets() {
+  document.querySelectorAll('.file-item.drop-target').forEach(el => el.classList.remove('drop-target'));
+}
+
+// ── Merge ──
+async function mergePDFs() {
+  if (files.length < 2) return;
+  mergeBtn.disabled = true;
+  mergeBtnText.textContent = 'Merging…';
+  progressWrap.style.display = 'block';
+  progressFill.style.width = '5%';
+
+  try {
+    const merged = await PDFLib.PDFDocument.create();
+    const addBookmarks = addBookmarksCheck.checked;
+
+    for (let i = 0; i < files.length; i++) {
+      const buf = await files[i].file.arrayBuffer();
+      progressFill.style.width = (10 + (i / files.length) * 75) + '%';
+      const src = await PDFLib.PDFDocument.load(buf, { ignoreEncryption: true });
+      const pageIdxs = src.getPageIndices();
+      const copiedPages = await merged.copyPages(src, pageIdxs);
+
+      if (addBookmarks) {
+        const startPageIdx = merged.getPageCount();
+        copiedPages.forEach(p => merged.addPage(p));
+        try {
+          const dest = PDFLib.PDFArray.withContext(merged.context);
+          const ref = merged.getPage(startPageIdx).ref;
+          dest.push(ref);
+          dest.push(PDFLib.PDFName.of('XYZ'));
+          dest.push(PDFLib.PDFNull);
+          dest.push(PDFLib.PDFNull);
+          dest.push(PDFLib.PDFNull);
+          const outline = merged.context.obj({
+            Title: PDFLib.PDFHexString.fromText(files[i].name),
+            Dest: dest,
+          });
+          merged.context.assign(merged.context.nextRef(), outline);
+        } catch(e) { /* bookmarks are best-effort */ }
+      } else {
+        copiedPages.forEach(p => merged.addPage(p));
+      }
+    }
+
+    progressFill.style.width = '90%';
+    const bytes = await merged.save();
+    progressFill.style.width = '100%';
+
+    const blob = new Blob([bytes], { type: 'application/pdf' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    const rawName = (filenameInput.value.trim() || 'merged').replace(/\.pdf$/i, '');
+    a.href = url;
+    a.download = rawName + '.pdf';
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(url), 5000);
+
+    const totalPages = files.reduce((s, f) => s + f.pages, 0);
+    showToast(`✓ Merged ${files.length} PDFs (${totalPages} pages) — downloading now`, 'success');
+
+  } catch (err) {
+    console.error(err);
+    showToast('Something went wrong: ' + err.message, 'error');
+  } finally {
+    setTimeout(() => {
+      mergeBtn.disabled = files.length < 2;
+      mergeBtnText.textContent = `Merge ${files.length} PDFs`;
+      progressWrap.style.display = 'none';
+      progressFill.style.width = '0%';
+    }, 800);
+  }
+}
+
+// ── Event wiring ──
+fileInput.addEventListener('change', e => { addFiles(e.target.files); fileInput.value = ''; });
+addMoreInput.addEventListener('change', e => { addFiles(e.target.files); addMoreInput.value = ''; });
+mergeBtn.addEventListener('click', mergePDFs);
+
+// Dropzone drag-and-drop
+dropzone.addEventListener('dragover', e => { e.preventDefault(); dropzone.classList.add('drag-over'); });
+dropzone.addEventListener('dragleave', () => dropzone.classList.remove('drag-over'));
+dropzone.addEventListener('drop', e => {
+  e.preventDefault();
+  dropzone.classList.remove('drag-over');
+  addFiles(e.dataTransfer.files);
+});
+
+// Paste support
+document.addEventListener('paste', e => {
+  const pdfItems = Array.from(e.clipboardData.files).filter(f => f.type === 'application/pdf');
+  if (pdfItems.length) addFiles(pdfItems);
+});
+
+renderList();
+</script>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5912433991207295" crossorigin="anonymous"></script>
+</body>
+</html>
