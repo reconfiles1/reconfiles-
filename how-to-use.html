@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How to Use ReconFiles — CSV Reconciliation Guide</title>
+<meta name="description" content="Step-by-step guide to reconciling two CSV files with ReconFiles. Learn how to match payment references, handle foreign currency differences, and export to Excel.">
+<meta name="author" content="ReconFiles">
+<link rel="canonical" href="https://reconfiles.co.uk/how-to-use.html">
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://reconfiles.co.uk/how-to-use.html">
+<meta property="og:title" content="How to Use ReconFiles — CSV Reconciliation Guide">
+<meta property="og:description" content="Step-by-step guide to reconciling two CSV files with ReconFiles. Match records on a payment reference, handle FX differences, and export to Excel.">
+<meta property="og:image" content="https://reconfiles.co.uk/og-image.png">
+<meta property="og:site_name" content="ReconFiles">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "HowTo",
+  "name": "How to reconcile two CSV files with ReconFiles",
+  "description": "A step-by-step guide to matching records across two CSV files using a shared payment reference, invoice number or transaction ID.",
+  "url": "https://reconfiles.co.uk/how-to-use.html",
+  "step": [
+    { "@type": "HowToStep", "name": "Upload your two CSV files", "text": "Drag and drop or browse for your two CSV files. ReconFiles accepts any CSV exported from systems like Stripe, GoCardless, Salesforce, Xero, or Excel." },
+    { "@type": "HowToStep", "name": "Review the auto-detected columns", "text": "ReconFiles scans the actual values in each file and suggests the best matching key column and amount column, even when names differ between systems." },
+    { "@type": "HowToStep", "name": "Adjust settings if needed", "text": "Confirm or change the key and amount columns. Set your tolerance thresholds for handling small FX rate differences." },
+    { "@type": "HowToStep", "name": "Run the reconciliation", "text": "Click Reconcile to match records. View matched references, unmatched rows, and any amount discrepancies across four result tabs." },
+    { "@type": "HowToStep", "name": "Export to Excel", "text": "Download a multi-sheet Excel workbook with VLOOKUP formulas linking both source sheets, ready to share or archive." }
+  ]
+}
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Hanken+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F1EEE4;
+    --surface:#FBFAF5;
+    --surface-2:#F6F4EB;
+    --ink:#1B1A15;
+    --muted:#6E6C61;
+    --faint:#9B998D;
+    --line:#D9D5C6;
+    --line-strong:#C5C0AD;
+    --accent:#15573B;
+    --accent-hover:#0F4530;
+    --matched:#1F7A52;
+    --matched-bg:#E2EFE7;
+    --a-only:#2A5FA0;
+    --a-only-bg:#E3EAF3;
+    --b-only:#A86C12;
+    --b-only-bg:#F3EAD7;
+    --mismatch:#BC3B2B;
+    --mismatch-bg:#F4E2DE;
+    --radius:14px;
+    --shadow:0 1px 2px rgba(27,26,21,.04), 0 8px 24px -12px rgba(27,26,21,.18);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html,body{height:100%;}
+  body{
+    font-family:'Hanken Grotesk',sans-serif;
+    background:var(--paper);
+    color:var(--ink);
+    -webkit-font-smoothing:antialiased;
+    line-height:1.6;
+    background-image:radial-gradient(var(--line) .6px, transparent .6px);
+    background-size:22px 22px;
+  }
+  .wrap{max-width:860px;margin:0 auto;padding:42px 28px 80px;}
+
+  header{
+    display:flex;align-items:center;justify-content:space-between;
+    gap:24px;flex-wrap:wrap;
+    border-bottom:2px solid var(--ink);
+    padding-bottom:22px;margin-bottom:48px;
+  }
+  .brand{display:flex;align-items:baseline;gap:12px;text-decoration:none;color:inherit;}
+  .brand h1{
+    font-family:'Bricolage Grotesque',sans-serif;
+    font-weight:800;font-size:clamp(1.6rem,4vw,2.2rem);
+    letter-spacing:-.03em;line-height:.95;
+  }
+  .brand .mark{
+    width:12px;height:12px;border-radius:50%;
+    background:var(--accent);flex-shrink:0;
+    box-shadow:0 0 0 4px var(--matched-bg);
+  }
+  .nav-links{display:flex;gap:10px;flex-wrap:wrap;}
+  a.nav-link, a.nav-link:link, a.nav-link:visited{
+    display:inline-flex;align-items:center;
+    font-family:'Hanken Grotesk',sans-serif;font-size:.82rem;font-weight:600;
+    color:var(--accent);text-decoration:none;white-space:nowrap;
+    border:1px solid var(--accent);border-radius:8px;
+    padding:6px 13px;transition:.15s;
+  }
+  a.nav-link:hover{background:var(--matched-bg);}
+  a.nav-link.active{background:var(--accent);color:#fff;}
+  a.nav-link.active:hover{background:var(--accent-hover);}
+
+  /* Page intro */
+  .page-intro{margin-bottom:48px;}
+  .page-eyebrow{
+    font-family:'JetBrains Mono',monospace;font-size:.7rem;font-weight:700;
+    letter-spacing:.14em;text-transform:uppercase;color:var(--faint);
+    margin-bottom:12px;display:flex;align-items:center;gap:8px;
+  }
+  .page-eyebrow::before{content:"";width:24px;height:2px;background:var(--accent);}
+  .page-title{
+    font-family:'Bricolage Grotesque',sans-serif;font-weight:800;
+    font-size:clamp(2rem,5vw,2.8rem);letter-spacing:-.03em;
+    line-height:1.1;margin-bottom:16px;
+  }
+  .page-lead{font-size:1.05rem;color:var(--muted);max-width:600px;line-height:1.65;}
+
+  /* Steps */
+  .steps{display:flex;flex-direction:column;gap:0;margin-bottom:56px;}
+  .step{
+    display:grid;grid-template-columns:56px 1fr;gap:0 28px;
+    padding:32px 0;border-top:1px solid var(--line);
+  }
+  .step:last-child{border-bottom:1px solid var(--line);}
+  .step-num-wrap{display:flex;flex-direction:column;align-items:center;gap:0;padding-top:4px;}
+  .step-badge{
+    font-family:'JetBrains Mono',monospace;font-weight:700;font-size:.72rem;
+    background:var(--ink);color:var(--paper);
+    width:32px;height:32px;border-radius:9px;
+    display:grid;place-items:center;flex-shrink:0;
+  }
+  .step-line{width:2px;background:var(--line);flex:1;margin-top:8px;}
+  .step:last-child .step-line{display:none;}
+  .step-content{}
+  .step-title{
+    font-family:'Bricolage Grotesque',sans-serif;font-weight:700;
+    font-size:1.2rem;letter-spacing:-.02em;margin-bottom:10px;
+  }
+  .step-body{font-size:.9rem;color:var(--muted);line-height:1.7;}
+  .step-body p{margin-bottom:10px;}
+  .step-body p:last-child{margin-bottom:0;}
+  .step-body strong{color:var(--ink);font-weight:600;}
+  .step-body ul{padding-left:0;list-style:none;display:flex;flex-direction:column;gap:5px;margin-top:10px;}
+  .step-body ul li{display:flex;gap:8px;align-items:flex-start;}
+  .step-body ul li::before{
+    content:"";width:5px;height:5px;border-radius:50%;
+    background:var(--accent);flex-shrink:0;margin-top:7px;
+  }
+  .step-tag{
+    display:inline-flex;align-items:center;gap:5px;
+    font-family:'JetBrains Mono',monospace;font-size:.68rem;font-weight:700;
+    padding:3px 8px;border-radius:5px;margin-bottom:8px;
+  }
+  .step-tag.tip{background:var(--matched-bg);color:var(--matched);}
+  .step-tag.note{background:var(--b-only-bg);color:var(--b-only);}
+
+  /* FAQ section */
+  .section-head{
+    font-family:'Bricolage Grotesque',sans-serif;font-weight:800;
+    font-size:1.5rem;letter-spacing:-.02em;margin-bottom:24px;
+  }
+  .faqs{display:flex;flex-direction:column;gap:0;margin-bottom:56px;}
+  .faq{
+    padding:22px 0;border-top:1px solid var(--line);
+  }
+  .faq:last-child{border-bottom:1px solid var(--line);}
+  .faq-q{
+    font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:.95rem;
+    margin-bottom:8px;color:var(--ink);
+  }
+  .faq-a{font-size:.88rem;color:var(--muted);line-height:1.7;}
+  .faq-a strong{color:var(--ink);font-weight:600;}
+  code{
+    font-family:'JetBrains Mono',monospace;font-size:.78rem;
+    background:var(--surface-2);border:1px solid var(--line);
+    padding:1px 6px;border-radius:5px;color:var(--ink);
+  }
+
+  /* CTA */
+  .cta-block{
+    background:var(--surface);border:1px solid var(--line);
+    border-radius:var(--radius);padding:32px 28px;
+    box-shadow:var(--shadow);text-align:center;
+    margin-bottom:48px;
+  }
+  .cta-block h2{
+    font-family:'Bricolage Grotesque',sans-serif;font-weight:800;
+    font-size:1.4rem;letter-spacing:-.02em;margin-bottom:8px;
+  }
+  .cta-block p{font-size:.9rem;color:var(--muted);margin-bottom:20px;}
+  .btn-primary{
+    display:inline-flex;align-items:center;gap:8px;
+    font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:.95rem;
+    background:var(--accent);color:#fff;text-decoration:none;
+    border-radius:10px;padding:12px 24px;transition:.15s;
+  }
+  .btn-primary:hover{background:var(--accent-hover);}
+
+  footer{
+    margin-top:46px;padding-top:20px;border-top:1px solid var(--line);
+    font-size:.76rem;color:var(--faint);display:flex;
+    justify-content:space-between;gap:16px;flex-wrap:wrap;
+  }
+  footer b{color:var(--muted);font-weight:600;}
+  footer a{color:var(--faint);text-decoration:none;}
+  footer a:hover{color:var(--muted);}
+
+  @media(max-width:640px){
+    .wrap{padding:28px 16px 60px;}
+    .step{grid-template-columns:40px 1fr;gap:0 16px;}
+    .nav-links .nav-link:not(.active){display:none;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <a class="brand" href="/">
+      <span class="mark"></span>
+      <h1>ReconFiles</h1>
+    </a>
+    <nav class="nav-links">
+      <a href="/" class="nav-link">CSV Reconciliation</a>
+      <a href="/freepdf/" class="nav-link">PDF Merger</a>
+      <a href="/how-to-use.html" class="nav-link active">How to use</a>
+      <a href="/about.html" class="nav-link">About</a>
+    </nav>
+  </header>
+
+  <div class="page-intro">
+    <div class="page-eyebrow">Guide</div>
+    <h2 class="page-title">How to reconcile two CSV files</h2>
+    <p class="page-lead">ReconFiles matches records across two files using a shared key — a payment reference, invoice number, or transaction ID — and shows you exactly what lines up, what doesn't, and where the amounts differ.</p>
+  </div>
+
+  <div class="steps">
+
+    <div class="step">
+      <div class="step-num-wrap"><span class="step-badge">1</span><span class="step-line"></span></div>
+      <div class="step-content">
+        <div class="step-title">Upload your two CSV files</div>
+        <div class="step-body">
+          <p>Drag and drop your two files onto the upload areas, or click to browse. Both files must be in <strong>CSV format</strong> (.csv). If your data is in Excel, save each sheet as a CSV first via File → Save As → CSV.</p>
+          <p>Common use cases include matching a <strong>Stripe or GoCardless payout export</strong> against a <strong>Salesforce or Xero report</strong>, or reconciling a bank statement against an internal ledger. Any two CSV files with a shared reference column will work.</p>
+          <div class="step-tag tip">Tip</div>
+          <p>Once both files load, ReconFiles immediately scans the column values and suggests the best match key and amount columns — you usually won't need to change anything.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num-wrap"><span class="step-badge">2</span><span class="step-line"></span></div>
+      <div class="step-content">
+        <div class="step-title">Review the auto-detected columns</div>
+        <div class="step-body">
+          <p>The <strong>auto-detect</strong> feature scans the actual values in each column — not just the column names — to find the best matching pair. This is especially useful when the same reference is called <code>Description</code> in one file and <code>Asperato Reference</code> in another.</p>
+          <p>It detects two things:</p>
+          <ul>
+            <li><strong>Match key</strong> — the column whose values appear in both files (e.g. a payment reference like <code>9364-A143842077</code>). Shows the percentage overlap found.</li>
+            <li><strong>Amount column</strong> — the numeric column to compare between files. ReconFiles checks that per-key totals broadly agree before recommending a pair.</li>
+          </ul>
+          <p>You can override any suggestion using the dropdowns in Step 2.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num-wrap"><span class="step-badge">3</span><span class="step-line"></span></div>
+      <div class="step-content">
+        <div class="step-title">Set your tolerance thresholds</div>
+        <div class="step-body">
+          <p>When two systems convert the same foreign currency payment to GBP, they often use slightly different exchange rates — producing a small difference that isn't really a mismatch. The two tolerance fields let you absorb this noise.</p>
+          <ul>
+            <li><strong>Ignore below £</strong> — absolute floor. Any difference smaller than this (e.g. £0.01) is ignored.</li>
+            <li><strong>… and below %</strong> — percentage floor. Any difference smaller than this percentage of the amount (e.g. 0.5%) is also ignored.</li>
+          </ul>
+          <div class="step-tag note">Important</div>
+          <p>A row is only flagged as a mismatch when the difference exceeds <strong>both</strong> thresholds. This means small rounding differences on large amounts pass through cleanly, while genuine discrepancies on any amount are still caught.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num-wrap"><span class="step-badge">4</span><span class="step-line"></span></div>
+      <div class="step-content">
+        <div class="step-title">Run the reconciliation</div>
+        <div class="step-body">
+          <p>Click <strong>Reconcile files →</strong> to run the match. Results appear across four tabs:</p>
+          <ul>
+            <li><strong>Matched</strong> — references found in both files, with all File A columns preserved and reconciliation summary columns appended.</li>
+            <li><strong>Only in A</strong> — references in File A with no match in File B. You can tick individual rows to exclude them from the Excel export.</li>
+            <li><strong>Only in B</strong> — references in File B with no match in File A.</li>
+            <li><strong>Amount mismatches</strong> — matched references whose summed amounts differ beyond your tolerance thresholds.</li>
+          </ul>
+          <p>Each tab has a search/filter box and shows the row count. You can re-run at any time by changing the column settings and clicking Reconcile again.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num-wrap"><span class="step-badge">5</span><span class="step-line"></span></div>
+      <div class="step-content">
+        <div class="step-title">Export to Excel</div>
+        <div class="step-body">
+          <p>Click <strong>↓ Export to Excel</strong> to download a <code>.xlsx</code> workbook. It contains up to five sheets:</p>
+          <ul>
+            <li><strong>File A sheet</strong> — your original data with a <code>Match</code> column (VLOOKUP formula) and a <code>Difference (A − B)</code> column (SUMIF formula) inserted after the key column, mirroring a typical manual reconciliation layout.</li>
+            <li><strong>File B sheet</strong> — same structure, looking up into File A.</li>
+            <li><strong>Only in A</strong> — unmatched rows from File A (excluding any you ticked for exclusion).</li>
+            <li><strong>Only in B</strong> — unmatched rows from File B.</li>
+            <li><strong>Summary</strong> — a metadata sheet recording which files were used, the match key, tolerances, and result counts.</li>
+          </ul>
+          <div class="step-tag tip">Tip</div>
+          <p>Amount columns in the export are written as real Excel numbers, not text — so you can select any amount column and see the sum in Excel's status bar immediately.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num-wrap"><span class="step-badge">6</span><span class="step-line"></span></div>
+      <div class="step-content">
+        <div class="step-title">Save your column mapping for next time</div>
+        <div class="step-body">
+          <p>If you reconcile the same two systems every month, save your settings as a named mapping. Click <strong>＋ Save current as…</strong> in the Saved mappings bar, give it a name (e.g. <em>Stripe ↔ Salesforce</em>), and it's stored in your browser.</p>
+          <p>Next month, load the same files and select the mapping from the dropdown — all column selections and tolerance settings are applied in one click. Mappings are marked with <strong>✓</strong> (fully compatible), <strong>◐</strong> (partial), or <strong>✗</strong> (incompatible with the current files) so you always know what to expect.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <h2 class="section-head">Frequently asked questions</h2>
+  <div class="faqs">
+
+    <div class="faq">
+      <div class="faq-q">Does my data get uploaded to a server?</div>
+      <div class="faq-a">No. All processing happens entirely in your browser using JavaScript. Your files are never sent to any server. ReconFiles has no backend and no database — once you close the tab, nothing is retained anywhere outside your device.</div>
+    </div>
+
+    <div class="faq">
+      <div class="faq-q">What if a reference appears more than once in one of my files?</div>
+      <div class="faq-a">That's fine and very common — for example, a single GoCardless payment split across multiple Salesforce opportunity lines. ReconFiles detects duplicate keys and flags them in the <strong>Flag</strong> column. For amount comparison, it sums all rows sharing the same key on each side and compares the totals, so a £100 payment split into three lines of £30, £40, and £30 correctly matches a single £100 entry on the other side.</div>
+    </div>
+
+    <div class="faq">
+      <div class="faq-q">What file formats are supported?</div>
+      <div class="faq-a">CSV (.csv) only for the reconciliation tool. If your data is in Excel, use File → Save As → CSV (UTF-8) in Excel first. The export is always an <code>.xlsx</code> Excel workbook.</div>
+    </div>
+
+    <div class="faq">
+      <div class="faq-q">What does the Difference (A − B) column in the export show?</div>
+      <div class="faq-a">It uses a live <code>SUMIF</code> formula to compute: sum of File A's amounts for that reference, minus sum of File B's amounts for the same reference. A result of <strong>0</strong> means the amounts reconcile perfectly. A non-zero result means the per-reference totals don't line up — either because of an FX rate difference, a missing row, or a genuine discrepancy.</div>
+    </div>
+
+    <div class="faq">
+      <div class="faq-q">How do saved mappings work across devices?</div>
+      <div class="faq-a">Saved mappings are stored in your browser's <code>localStorage</code> on the device where you created them. They don't sync across devices or browsers. If you clear your browser data, the mappings will be removed. For now, the best approach is to keep ReconFiles open in the same browser on the same device each month.</div>
+    </div>
+
+    <div class="faq">
+      <div class="faq-q">Is there a row limit?</div>
+      <div class="faq-a">No hard limit — ReconFiles runs entirely in your browser and can handle files with tens of thousands of rows. Very large files (100,000+ rows) may take a few seconds to process depending on your device. The results table displays up to 500 rows at a time with a filter to find specific entries, and the Excel export always includes the full dataset.</div>
+    </div>
+
+  </div>
+
+  <div class="cta-block">
+    <h2>Ready to reconcile?</h2>
+    <p>Upload your two CSV files and get results in seconds — no account, no upload, no cost.</p>
+    <a href="/" class="btn-primary">Start reconciling →</a>
+  </div>
+
+  <footer>
+    <span>© 2025 <b>ReconFiles</b> · <a href="https://reconfiles.co.uk">reconfiles.co.uk</a></span>
+    <span>🔒 All processing happens in your browser — your files are never uploaded anywhere.</span>
+  </footer>
+
+</div>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5912433991207295" crossorigin="anonymous"></script>
+</body>
+</html>

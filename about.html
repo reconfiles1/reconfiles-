@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About ReconFiles — Free Browser-Based Finance Tools</title>
+<meta name="description" content="ReconFiles builds free, private, browser-based tools for finance and operations teams. No accounts, no uploads, no cost. Learn about what we're building and why.">
+<meta name="author" content="ReconFiles">
+<link rel="canonical" href="https://reconfiles.co.uk/about.html">
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://reconfiles.co.uk/about.html">
+<meta property="og:title" content="About ReconFiles — Free Browser-Based Finance Tools">
+<meta property="og:description" content="ReconFiles builds free, private, browser-based tools for finance and operations teams. No accounts, no uploads, no cost.">
+<meta property="og:image" content="https://reconfiles.co.uk/og-image.png">
+<meta property="og:site_name" content="ReconFiles">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "AboutPage",
+  "name": "About ReconFiles",
+  "url": "https://reconfiles.co.uk/about.html",
+  "description": "ReconFiles builds free, privacy-first tools for finance and operations teams.",
+  "publisher": {
+    "@type": "Organization",
+    "name": "ReconFiles",
+    "url": "https://reconfiles.co.uk",
+    "logo": "https://reconfiles.co.uk/og-image.png"
+  }
+}
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Hanken+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F1EEE4;
+    --surface:#FBFAF5;
+    --surface-2:#F6F4EB;
+    --ink:#1B1A15;
+    --muted:#6E6C61;
+    --faint:#9B998D;
+    --line:#D9D5C6;
+    --line-strong:#C5C0AD;
+    --accent:#15573B;
+    --accent-hover:#0F4530;
+    --matched:#1F7A52;
+    --matched-bg:#E2EFE7;
+    --radius:14px;
+    --shadow:0 1px 2px rgba(27,26,21,.04), 0 8px 24px -12px rgba(27,26,21,.18);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html,body{height:100%;}
+  body{
+    font-family:'Hanken Grotesk',sans-serif;
+    background:var(--paper);
+    color:var(--ink);
+    -webkit-font-smoothing:antialiased;
+    line-height:1.6;
+    background-image:radial-gradient(var(--line) .6px, transparent .6px);
+    background-size:22px 22px;
+  }
+  .wrap{max-width:860px;margin:0 auto;padding:42px 28px 80px;}
+
+  header{
+    display:flex;align-items:center;justify-content:space-between;
+    gap:24px;flex-wrap:wrap;
+    border-bottom:2px solid var(--ink);
+    padding-bottom:22px;margin-bottom:48px;
+  }
+  .brand{display:flex;align-items:baseline;gap:12px;text-decoration:none;color:inherit;}
+  .brand h1{
+    font-family:'Bricolage Grotesque',sans-serif;
+    font-weight:800;font-size:clamp(1.6rem,4vw,2.2rem);
+    letter-spacing:-.03em;line-height:.95;
+  }
+  .brand .mark{
+    width:12px;height:12px;border-radius:50%;
+    background:var(--accent);flex-shrink:0;
+    box-shadow:0 0 0 4px var(--matched-bg);
+  }
+  .nav-links{display:flex;gap:10px;flex-wrap:wrap;}
+  a.nav-link, a.nav-link:link, a.nav-link:visited{
+    display:inline-flex;align-items:center;
+    font-family:'Hanken Grotesk',sans-serif;font-size:.82rem;font-weight:600;
+    color:var(--accent);text-decoration:none;white-space:nowrap;
+    border:1px solid var(--accent);border-radius:8px;
+    padding:6px 13px;transition:.15s;
+  }
+  a.nav-link:hover{background:var(--matched-bg);}
+  a.nav-link.active{background:var(--accent);color:#fff;}
+  a.nav-link.active:hover{background:var(--accent-hover);}
+
+  .page-intro{margin-bottom:48px;}
+  .page-eyebrow{
+    font-family:'JetBrains Mono',monospace;font-size:.7rem;font-weight:700;
+    letter-spacing:.14em;text-transform:uppercase;color:var(--faint);
+    margin-bottom:12px;display:flex;align-items:center;gap:8px;
+  }
+  .page-eyebrow::before{content:"";width:24px;height:2px;background:var(--accent);}
+  .page-title{
+    font-family:'Bricolage Grotesque',sans-serif;font-weight:800;
+    font-size:clamp(2rem,5vw,2.8rem);letter-spacing:-.03em;
+    line-height:1.1;margin-bottom:16px;
+  }
+  .page-lead{font-size:1.05rem;color:var(--muted);max-width:600px;line-height:1.65;}
+
+  /* Content sections */
+  .content-section{
+    margin-bottom:48px;padding-bottom:48px;
+    border-bottom:1px solid var(--line);
+  }
+  .content-section:last-of-type{border-bottom:none;}
+  .section-label{
+    font-family:'JetBrains Mono',monospace;font-size:.68rem;font-weight:700;
+    letter-spacing:.14em;text-transform:uppercase;color:var(--faint);
+    margin-bottom:14px;
+  }
+  .section-title{
+    font-family:'Bricolage Grotesque',sans-serif;font-weight:800;
+    font-size:1.4rem;letter-spacing:-.02em;margin-bottom:16px;
+  }
+  .prose p{
+    font-size:.95rem;color:var(--muted);line-height:1.75;margin-bottom:16px;
+  }
+  .prose p:last-child{margin-bottom:0;}
+  .prose strong{color:var(--ink);font-weight:600;}
+  .prose a{color:var(--accent);text-decoration:underline;text-underline-offset:3px;}
+  .prose a:hover{color:var(--accent-hover);}
+
+  /* Principles */
+  .principles{
+    display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:24px;
+  }
+  .principle{
+    background:var(--surface);border:1px solid var(--line);
+    border-radius:var(--radius);padding:20px;
+    box-shadow:var(--shadow);
+  }
+  .principle-icon{font-size:1.4rem;margin-bottom:10px;line-height:1;}
+  .principle-title{
+    font-family:'Bricolage Grotesque',sans-serif;font-weight:700;
+    font-size:.95rem;letter-spacing:-.01em;margin-bottom:6px;
+  }
+  .principle-desc{font-size:.82rem;color:var(--muted);line-height:1.6;}
+
+  /* Tools grid */
+  .tools-grid{
+    display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:24px;
+  }
+  .tool-card{
+    background:var(--surface);border:1px solid var(--line);
+    border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);
+    text-decoration:none;color:inherit;transition:.15s;display:block;
+  }
+  .tool-card:hover{border-color:var(--accent);transform:translateY(-1px);}
+  .tool-card.coming{opacity:.6;cursor:default;}
+  .tool-card.coming:hover{transform:none;border-color:var(--line);}
+  .tool-status{
+    font-family:'JetBrains Mono',monospace;font-size:.62rem;font-weight:700;
+    letter-spacing:.12em;text-transform:uppercase;margin-bottom:8px;
+    display:inline-block;padding:2px 7px;border-radius:4px;
+  }
+  .tool-status.live{background:var(--matched-bg);color:var(--matched);}
+  .tool-status.soon{background:var(--surface-2);color:var(--faint);border:1px solid var(--line);}
+  .tool-name{
+    font-family:'Bricolage Grotesque',sans-serif;font-weight:700;
+    font-size:1.05rem;letter-spacing:-.01em;margin-bottom:6px;
+  }
+  .tool-desc{font-size:.82rem;color:var(--muted);line-height:1.55;}
+
+  /* CTA */
+  .cta-block{
+    background:var(--surface);border:1px solid var(--line);
+    border-radius:var(--radius);padding:32px 28px;
+    box-shadow:var(--shadow);text-align:center;
+    margin-bottom:48px;
+  }
+  .cta-block h2{
+    font-family:'Bricolage Grotesque',sans-serif;font-weight:800;
+    font-size:1.4rem;letter-spacing:-.02em;margin-bottom:8px;
+  }
+  .cta-block p{font-size:.9rem;color:var(--muted);margin-bottom:20px;}
+  .btn-primary{
+    display:inline-flex;align-items:center;gap:8px;
+    font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:.95rem;
+    background:var(--accent);color:#fff;text-decoration:none;
+    border-radius:10px;padding:12px 24px;transition:.15s;
+  }
+  .btn-primary:hover{background:var(--accent-hover);}
+
+  footer{
+    margin-top:46px;padding-top:20px;border-top:1px solid var(--line);
+    font-size:.76rem;color:var(--faint);display:flex;
+    justify-content:space-between;gap:16px;flex-wrap:wrap;
+  }
+  footer b{color:var(--muted);font-weight:600;}
+  footer a{color:var(--faint);text-decoration:none;}
+  footer a:hover{color:var(--muted);}
+
+  @media(max-width:640px){
+    .wrap{padding:28px 16px 60px;}
+    .principles,.tools-grid{grid-template-columns:1fr;}
+    .nav-links .nav-link:not(.active){display:none;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <a class="brand" href="/">
+      <span class="mark"></span>
+      <h1>ReconFiles</h1>
+    </a>
+    <nav class="nav-links">
+      <a href="/" class="nav-link">CSV Reconciliation</a>
+      <a href="/freepdf/" class="nav-link">PDF Merger</a>
+      <a href="/how-to-use.html" class="nav-link">How to use</a>
+      <a href="/about.html" class="nav-link active">About</a>
+    </nav>
+  </header>
+
+  <div class="page-intro">
+    <div class="page-eyebrow">About</div>
+    <h2 class="page-title">Built for people who work with data every day</h2>
+    <p class="page-lead">ReconFiles is a collection of free, browser-based tools for finance, operations, and admin teams. No accounts. No uploads. No cost. Just open the page and get to work.</p>
+  </div>
+
+  <div class="content-section">
+    <div class="section-label">The problem</div>
+    <div class="section-title">Too much time on tasks that should be instant</div>
+    <div class="prose">
+      <p>Finance teams spend hours every month reconciling payment processor exports against accounting system reports — cross-referencing rows in two spreadsheets, tracking down missing references, investigating amount differences. It's repetitive, error-prone, and entirely manual.</p>
+      <p>The tools that exist to help are either expensive enterprise software that requires IT setup and training, or outdated Excel macros that break when column names change. There's a gap in the middle: <strong>simple, capable tools that just work</strong>, with no installation, no login, and no ongoing subscription.</p>
+      <p>That's the gap ReconFiles is filling — starting with the most common task: matching two CSV files on a shared reference and understanding where they agree and where they don't.</p>
+    </div>
+  </div>
+
+  <div class="content-section">
+    <div class="section-label">Our principles</div>
+    <div class="section-title">How we build</div>
+    <div class="principles">
+      <div class="principle">
+        <div class="principle-icon">🔒</div>
+        <div class="principle-title">Private by design</div>
+        <div class="principle-desc">Every tool runs entirely in your browser. Your files never leave your device — there are no servers, no databases, and nothing is stored remotely.</div>
+      </div>
+      <div class="principle">
+        <div class="principle-icon">⚡</div>
+        <div class="principle-title">No friction</div>
+        <div class="principle-desc">No account to create, no email to verify, no software to install. Open the page and use it. That's the whole onboarding process.</div>
+      </div>
+      <div class="principle">
+        <div class="principle-icon">🎯</div>
+        <div class="principle-title">Purpose-built</div>
+        <div class="principle-desc">Each tool is built to solve one specific problem really well, rather than being a Swiss army knife that does many things adequately.</div>
+      </div>
+      <div class="principle">
+        <div class="principle-icon">£0</div>
+        <div class="principle-title">Free, always</div>
+        <div class="principle-desc">All tools on ReconFiles are free to use. The site is supported by advertising, not subscriptions or paywalls.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="content-section">
+    <div class="section-label">What we've built</div>
+    <div class="section-title">Tools available now and coming soon</div>
+    <div class="tools-grid">
+      <a href="/" class="tool-card">
+        <span class="tool-status live">Live</span>
+        <div class="tool-name">CSV Reconciliation</div>
+        <div class="tool-desc">Match two CSV files on a shared payment reference or invoice number. Auto-detects columns, handles FX drift, exports to Excel with live VLOOKUP formulas.</div>
+      </a>
+      <a href="/freepdf/" class="tool-card">
+        <span class="tool-status live">Live</span>
+        <div class="tool-name">PDF Merger</div>
+        <div class="tool-desc">Combine multiple PDF files into one. Drag to reorder pages, set bookmarks, and download the merged file — all in your browser.</div>
+      </a>
+      <div class="tool-card coming">
+        <span class="tool-status soon">Coming soon</span>
+        <div class="tool-name">Duplicate Finder</div>
+        <div class="tool-desc">Upload one CSV and identify duplicate values across any column. Preview, filter, and remove duplicates before exporting a clean file.</div>
+      </div>
+      <div class="tool-card coming">
+        <span class="tool-status soon">Coming soon</span>
+        <div class="tool-name">CSV Merger</div>
+        <div class="tool-desc">Combine multiple CSV files that share the same column headers into one unified file. Stack exports from multiple periods or sources instantly.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="content-section">
+    <div class="section-label">Privacy</div>
+    <div class="section-title">Your data stays on your device</div>
+    <div class="prose">
+      <p>Every tool on ReconFiles processes your files entirely in your browser using JavaScript. When you upload a CSV or PDF, the file is read locally by your browser — it is <strong>never transmitted to any server</strong>, stored in any database, or accessible to anyone other than you.</p>
+      <p>ReconFiles has no backend infrastructure. There are no servers receiving your files, no analytics tracking what you upload, and no logs of your activity. The only data stored anywhere is your saved column mappings, which are kept in your browser's <code>localStorage</code> on your own device and never leave it.</p>
+      <p>The site uses Google AdSense to display advertisements, which may use cookies for ad personalisation in accordance with Google's privacy policy. No financial data or file contents are shared with advertisers.</p>
+    </div>
+  </div>
+
+  <div class="cta-block">
+    <h2>Try the CSV reconciliation tool</h2>
+    <p>Upload two CSV files and get a full reconciliation report in seconds.</p>
+    <a href="/" class="btn-primary">Start reconciling →</a>
+  </div>
+
+  <footer>
+    <span>© 2025 <b>ReconFiles</b> · <a href="https://reconfiles.co.uk">reconfiles.co.uk</a></span>
+    <span>🔒 All processing happens in your browser — your files are never uploaded anywhere.</span>
+  </footer>
+
+</div>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5912433991207295" crossorigin="anonymous"></script>
+</body>
+</html>
