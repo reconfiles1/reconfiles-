@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How to handle foreign currency differences when reconciling payments | ReconFiles</title>
+<meta name="description" content="When two systems convert currency at slightly different rates you get tiny differences that aren't errors. Here's how to tell real discrepancies from FX noise using tolerance thresholds.">
+<meta name="author" content="ReconFiles">
+<link rel="canonical" href="https://reconfiles.co.uk/blog/foreign-currency-reconciliation.html">
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://reconfiles.co.uk/blog/foreign-currency-reconciliation.html">
+<meta property="og:title" content="How to handle foreign currency differences when reconciling payments">
+<meta property="og:description" content="When two systems convert currency at slightly different rates you get tiny differences that aren't errors. Here's how to tell real discrepancies from FX noise using tolerance thresholds.">
+<meta property="og:image" content="https://reconfiles.co.uk/og-image.png">
+<meta property="og:site_name" content="ReconFiles">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "HowTo",
+  "headline": "How to handle foreign currency differences when reconciling payments",
+  "description": "When two systems convert currency at slightly different rates you get tiny differences that aren't errors. Here's how to tell real discrepancies from FX noise using tolerance thresholds.",
+  "url": "https://reconfiles.co.uk/blog/foreign-currency-reconciliation.html",
+  "author": { "@type": "Organization", "name": "ReconFiles" },
+  "publisher": {
+    "@type": "Organization", "name": "ReconFiles",
+    "logo": { "@type": "ImageObject", "url": "https://reconfiles.co.uk/og-image.png" }
+  },
+  "mainEntityOfPage": "https://reconfiles.co.uk/blog/foreign-currency-reconciliation.html"
+}
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F1EEE4;--surface:#FBFAF5;--surface-2:#F6F4EB;
+    --ink:#1B1A15;--muted:#6E6C61;--faint:#9B998D;
+    --line:#D9D5C6;--line-strong:#C5C0AD;
+    --accent:#15573B;--accent-hover:#0F4530;--matched-bg:#E2EFE7;
+    --b-only:#A86C12;--b-only-bg:#F3EAD7;--mismatch:#BC3B2B;--mismatch-bg:#F4E2DE;
+    --radius:14px;--shadow:0 1px 2px rgba(27,26,21,.04), 0 8px 24px -12px rgba(27,26,21,.18);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    font-family:'Hanken Grotesk',sans-serif;background:var(--paper);color:var(--ink);
+    -webkit-font-smoothing:antialiased;line-height:1.7;
+    background-image:radial-gradient(var(--line) .6px, transparent .6px);background-size:22px 22px;
+  }
+  .wrap{max-width:760px;margin:0 auto;padding:42px 28px 80px;}
+  header{
+    display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap;
+    border-bottom:2px solid var(--ink);padding-bottom:22px;margin-bottom:40px;
+  }
+  .brand{display:flex;align-items:baseline;gap:12px;text-decoration:none;color:inherit;}
+  .brand h1{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;
+    font-size:clamp(1.4rem,4vw,1.9rem);letter-spacing:-.03em;line-height:.95;}
+  .brand .mark{width:11px;height:11px;border-radius:50%;background:var(--accent);
+    flex-shrink:0;box-shadow:0 0 0 4px var(--matched-bg);}
+  .nav-links{display:flex;gap:9px;flex-wrap:wrap;}
+  a.nav-link,a.nav-link:link,a.nav-link:visited{
+    display:inline-flex;align-items:center;font-family:'Hanken Grotesk',sans-serif;
+    font-size:.8rem;font-weight:600;color:var(--accent);text-decoration:none;white-space:nowrap;
+    border:1px solid var(--accent);border-radius:8px;padding:5px 12px;transition:.15s;
+  }
+  a.nav-link:hover{background:var(--matched-bg);}
+
+  .breadcrumb{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--faint);
+    margin-bottom:22px;}
+  .breadcrumb a{color:var(--accent);text-decoration:none;}
+  .breadcrumb a:hover{text-decoration:underline;}
+
+  .article-head{margin-bottom:34px;}
+  .article-eyebrow{font-family:'JetBrains Mono',monospace;font-size:.7rem;font-weight:700;
+    letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:14px;
+    display:flex;gap:12px;align-items:center;flex-wrap:wrap;}
+  .article-eyebrow .read{color:var(--faint);}
+  h1.article-title{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;
+    font-size:clamp(1.9rem,5vw,2.6rem);letter-spacing:-.03em;line-height:1.12;margin-bottom:18px;}
+  .article-lead{font-size:1.12rem;color:var(--muted);line-height:1.6;}
+
+  article{font-size:1rem;color:var(--ink);}
+  article h2{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;
+    font-size:1.5rem;letter-spacing:-.02em;margin:38px 0 14px;line-height:1.25;}
+  article h3{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;
+    font-size:1.15rem;letter-spacing:-.01em;margin:28px 0 10px;}
+  article p{margin-bottom:16px;color:var(--muted);}
+  article strong{color:var(--ink);font-weight:600;}
+  article ul,article ol{margin:0 0 18px 0;padding-left:0;list-style:none;
+    display:flex;flex-direction:column;gap:9px;}
+  article ul li{display:flex;gap:11px;align-items:flex-start;color:var(--muted);}
+  article ul li::before{content:"";width:6px;height:6px;border-radius:50%;
+    background:var(--accent);flex-shrink:0;margin-top:9px;}
+  article ol{counter-reset:steps;}
+  article ol li{display:flex;gap:13px;align-items:flex-start;color:var(--muted);
+    counter-increment:steps;}
+  article ol li::before{content:counter(steps);font-family:'JetBrains Mono',monospace;
+    font-size:.72rem;font-weight:700;background:var(--ink);color:var(--paper);
+    min-width:22px;height:22px;border-radius:6px;display:grid;place-items:center;
+    flex-shrink:0;margin-top:2px;}
+  article ul li strong,article ol li strong{color:var(--ink);}
+  article code{font-family:'JetBrains Mono',monospace;font-size:.85em;
+    background:var(--surface-2);border:1px solid var(--line);padding:1px 6px;
+    border-radius:5px;color:var(--ink);}
+  article a{color:var(--accent);text-decoration:underline;text-underline-offset:3px;}
+  article a:hover{color:var(--accent-hover);}
+  .callout{background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--accent);
+    border-radius:10px;padding:16px 18px;margin:22px 0;box-shadow:var(--shadow);}
+  .callout p{margin:0;font-size:.92rem;}
+  .callout .callout-label{font-family:'JetBrains Mono',monospace;font-size:.66rem;font-weight:700;
+    letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin-bottom:6px;display:block;}
+  .example-box{background:var(--surface-2);border:1px solid var(--line);border-radius:10px;
+    padding:18px;margin:22px 0;font-size:.92rem;}
+  .example-box .eg-label{font-family:'JetBrains Mono',monospace;font-size:.66rem;font-weight:700;
+    letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin-bottom:10px;}
+  .example-box table{width:100%;border-collapse:collapse;font-size:.85rem;margin-top:6px;}
+  .example-box th{text-align:left;font-family:'JetBrains Mono',monospace;font-size:.68rem;
+    text-transform:uppercase;letter-spacing:.05em;color:var(--muted);padding:6px 10px;
+    border-bottom:1.5px solid var(--line-strong);}
+  .example-box td{padding:6px 10px;border-bottom:1px solid var(--line);color:var(--ink);
+    font-family:'JetBrains Mono',monospace;font-size:.8rem;}
+
+  .tool-cta{background:var(--accent);border-radius:var(--radius);padding:26px 24px;
+    margin:36px 0;text-align:center;}
+  .tool-cta h3{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;color:#fff;
+    font-size:1.3rem;margin:0 0 6px;letter-spacing:-.02em;}
+  .tool-cta p{color:rgba(255,255,255,.85);font-size:.9rem;margin:0 0 16px;}
+  .tool-cta a{display:inline-flex;align-items:center;gap:8px;background:#fff;color:var(--accent);
+    font-weight:600;font-size:.92rem;text-decoration:none;border-radius:9px;padding:11px 22px;
+    transition:.15s;}
+  .tool-cta a:hover{background:var(--matched-bg);}
+
+  .related{margin-top:48px;padding-top:28px;border-top:1px solid var(--line);}
+  .related h3{font-family:'JetBrains Mono',monospace;font-size:.7rem;font-weight:700;
+    letter-spacing:.12em;text-transform:uppercase;color:var(--faint);margin-bottom:16px;}
+  .related-list{display:flex;flex-direction:column;gap:12px;}
+  .related a{text-decoration:none;color:var(--ink);font-weight:600;font-size:.95rem;
+    display:flex;gap:8px;align-items:baseline;transition:.15s;}
+  .related a:hover{color:var(--accent);}
+  .related a .ra{color:var(--accent);}
+
+  footer{margin-top:48px;padding-top:20px;border-top:1px solid var(--line);
+    font-size:.76rem;color:var(--faint);display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;}
+  footer b{color:var(--muted);font-weight:600;}
+  footer a{color:var(--faint);text-decoration:none;}
+  footer a:hover{color:var(--muted);}
+  footer .adsbygoogle{flex-basis:100%;margin-bottom:18px;}
+
+  @media(max-width:640px){
+    .wrap{padding:28px 16px 60px;}
+    .nav-links{display:none;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <a class="brand" href="/">
+      <span class="mark"></span>
+      <h1>ReconFiles</h1>
+    </a>
+    <nav class="nav-links">
+      <a href="/" class="nav-link">CSV Reconciliation</a>
+      <a href="/freepdf/" class="nav-link">PDF Toolkit</a>
+      <a href="/blog/" class="nav-link">Blog</a>
+      <a href="/about.html" class="nav-link">About</a>
+    </nav>
+  </header>
+
+  <div class="breadcrumb"><a href="/blog/">Blog</a> / Guide</div>
+
+  <div class="article-head">
+    <div class="article-eyebrow"><span>Guide</span><span class="read">7 min read</span></div>
+    <h1 class="article-title">How to handle foreign currency differences when reconciling payments</h1>
+    <p class="article-lead">When two systems convert the same currency at slightly different rates, you get tiny differences that aren't real errors. Here's how to tell genuine discrepancies apart from FX noise using tolerance thresholds.</p>
+  </div>
+
+  <article>
+
+    <p>Here's a situation that confuses a lot of people the first time they hit it. You're reconciling two systems, everything matches perfectly on the GBP transactions, but the foreign currency ones are all off by a few pence. Nothing's actually wrong — but your reconciliation is flagging dozens of "mismatches" that are really just rounding noise. This guide explains why that happens and how to handle it properly.</p>
+
+    <h2>Why the same payment shows two different amounts</h2>
+    <p>When a payment is made in a foreign currency — say USD, EUR, or DKK — but your books are kept in GBP, someone has to convert it. The problem is that <strong>different systems convert at different moments, using different exchange rates</strong>.</p>
+    <p>Your payment processor might convert at the rate at the instant the payment settled. Your accounting system might use the daily rate, or the rate on the date the invoice was raised, or a month-end rate. None of these is wrong — they're just different reference points for the same underlying amount.</p>
+    <p>The result: a $100 payment might appear as £78.42 in one system and £78.45 in the other. Both are legitimate. The 3p difference is purely an artefact of when and how each system did the conversion.</p>
+
+    <div class="callout">
+      <span class="callout-label">The key insight</span>
+      <p>A small difference on a foreign currency transaction is usually <strong>not an error</strong> — it's the unavoidable consequence of two systems converting the same amount at slightly different rates.</p>
+    </div>
+
+    <h2>The problem with exact matching</h2>
+    <p>If your reconciliation demands that amounts match to the penny, every foreign currency transaction becomes a false positive. You end up with a mismatch list full of 2p and 5p differences that you have to manually confirm are fine — which defeats the entire purpose of automating the reconciliation.</p>
+    <p>Worse, when genuine errors are buried in a long list of trivial FX differences, they're easy to miss. The noise hides the signal.</p>
+
+    <h2>The solution: tolerance thresholds</h2>
+    <p>The fix is to allow a small, defined tolerance — a threshold below which a difference is treated as "close enough" and not flagged. But a single threshold isn't quite enough, because the right tolerance depends on the size of the transaction. There are two kinds worth combining:</p>
+    <ul>
+      <li><strong>An absolute threshold</strong> — a fixed amount, like £0.01 or £0.05. Anything smaller is ignored. This handles rounding on small transactions.</li>
+      <li><strong>A percentage threshold</strong> — like 0.5% of the transaction amount. This scales with the size of the payment, so a large transaction is allowed a proportionally larger drift.</li>
+    </ul>
+
+    <h3>Why you want both</h3>
+    <p>Consider the two extremes. On a £5 payment, a 0.5% tolerance is only 2.5p — too tight to absorb normal FX rounding. On a £50,000 payment, a flat £0.05 tolerance is far too strict, since even a tiny rate difference produces pounds of variation.</p>
+    <p>The robust approach is to flag a difference as a genuine mismatch <strong>only when it exceeds both thresholds at once</strong>. A difference sails through if it's within either the absolute floor or the percentage floor — which means small rounding on small amounts passes, proportional drift on large amounts passes, but a real discrepancy of any meaningful size is still caught.</p>
+
+    <div class="example-box">
+      <div class="eg-label">How the dual threshold behaves</div>
+      <table>
+        <tr><th>Amount</th><th>Difference</th><th>Abs £0.02</th><th>Pct 0.5%</th><th>Result</th></tr>
+        <tr><td>£78.42</td><td>£0.03</td><td>over</td><td>under (39p)</td><td>OK</td></tr>
+        <tr><td>£12.00</td><td>£0.01</td><td>under</td><td>under (6p)</td><td>OK</td></tr>
+        <tr><td>£5,000.00</td><td>£4.00</td><td>over</td><td>under (£25)</td><td>OK</td></tr>
+        <tr><td>£120.00</td><td>£8.50</td><td>over</td><td>over (60p)</td><td>Flag</td></tr>
+      </table>
+      <p style="margin-top:10px;margin-bottom:0;color:var(--muted);">Only the last row exceeds both thresholds, so only it gets flagged as a real mismatch.</p>
+    </div>
+
+    <h2>Choosing your thresholds</h2>
+    <p>Sensible starting points for most finance work:</p>
+    <ul>
+      <li><strong>Absolute:</strong> £0.01 to £0.05, depending on how much rounding your systems introduce.</li>
+      <li><strong>Percentage:</strong> 0.5% is a common default. Tighten it to 0.1% if your rates are usually close, or loosen it toward 1% if you deal with volatile currencies or rates set on very different dates.</li>
+    </ul>
+    <p>The right numbers depend on your data. Start conservative, look at what gets flagged, and adjust until the mismatch list contains only differences that genuinely warrant investigation.</p>
+
+    <h2>What still needs investigating</h2>
+    <p>Tolerance handles rounding — it should never hide real problems. A difference that exceeds your thresholds could mean a payment recorded at the wrong amount, a missing transaction inflating or deflating a summed total, a rate applied to the wrong date entirely, or a genuine short payment. Those are exactly the cases you want surfaced, which is why the goal is to tune tolerance to silence the noise without silencing the signal.</p>
+
+    <div class="tool-cta">
+      <h3>Built-in FX tolerance</h3>
+      <p>ReconFiles lets you set both an absolute and a percentage tolerance, so foreign currency rounding doesn't clutter your mismatch list.</p>
+      <a href="/">Try the reconciliation tool →</a>
+    </div>
+
+    <h2>The bottom line</h2>
+    <p>Foreign currency differences are a normal part of reconciling across systems, not a sign something's broken. The trick is to stop demanding penny-perfect matches and instead define a sensible tolerance — ideally combining an absolute floor and a percentage floor — so that rounding noise passes quietly while real discrepancies still get flagged for you to investigate.</p>
+
+  </article>
+
+  <div class="related">
+    <h3>Related guides</h3>
+    <div class="related-list">
+      <a href="/blog/how-to-reconcile-two-csv-files.html"><span class="ra">→</span> How to reconcile two CSV files without Excel formulas</a>
+      <a href="/blog/reconcile-stripe-payouts.html"><span class="ra">→</span> How to reconcile a Stripe or GoCardless payout</a>
+      <a href="/blog/common-reconciliation-mistakes.html"><span class="ra">→</span> 5 common CSV reconciliation mistakes and how to avoid them</a>
+    </div>
+  </div>
+
+  <footer>
+    <ins class="adsbygoogle" style="display:block;width:100%;"
+         data-ad-client="ca-pub-5912433991207295" data-ad-slot="7756971595"
+         data-ad-format="auto" data-full-width-responsive="true"></ins>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    <span>© 2025 <b>ReconFiles</b> · <a href="https://reconfiles.co.uk">reconfiles.co.uk</a></span>
+    <span>🔒 All processing happens in your browser — your files are never uploaded anywhere.</span>
+  </footer>
+
+</div>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5912433991207295" crossorigin="anonymous"></script>
+</body>
+</html>
