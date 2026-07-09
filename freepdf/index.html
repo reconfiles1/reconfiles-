@@ -2,90 +2,76 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="description" content="Free online PDF merger. Combine multiple PDFs into one file, drag to reorder, and download instantly — all in your browser. Nothing uploaded.">
-<link rel="canonical" href="https://reconfiles.co.uk/freepdf/">
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>PDF Merger — ReconFiles</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Hanken+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+<title>PDF & Image Merger — Combine PDFs and Images Free Online</title>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   :root {
-    --bg: #F1EEE4;
-    --surface: #FBFAF5;
-    --border: #D9D5C6;
-    --border-strong: #C5C0AD;
-    --text-primary: #1B1A15;
-    --text-secondary: #6E6C61;
-    --text-hint: #9B998D;
-    --accent: #15573B;
-    --accent-light: #E2EFE7;
-    --accent-text: #0F4530;
-    --danger: #BC3B2B;
-    --danger-light: #F4E2DE;
-    --success: #1F7A52;
-    --success-light: #E2EFE7;
-    --radius: 14px;
-    --radius-sm: 9px;
-    --shadow: 0 1px 2px rgba(27,26,21,.04), 0 8px 24px -12px rgba(27,26,21,.18);
-    --shadow-lg: 0 4px 24px rgba(27,26,21,.12);
+    --bg: #F7F6F3;
+    --surface: #FFFFFF;
+    --border: rgba(0,0,0,0.10);
+    --border-strong: rgba(0,0,0,0.18);
+    --text-primary: #1A1A18;
+    --text-secondary: #5F5E5A;
+    --text-hint: #9C9B96;
+    --accent: #2C5FF6;
+    --accent-light: #EDF1FE;
+    --accent-text: #1741C4;
+    --danger: #C0392B;
+    --danger-light: #FCEBEB;
+    --success: #1D6F42;
+    --success-light: #EAF3DE;
+    --radius: 10px;
+    --radius-sm: 6px;
+    --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+    --shadow-lg: 0 4px 16px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.04);
   }
 
   body {
-    font-family: 'Hanken Grotesk', sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     background: var(--bg);
-    background-image: radial-gradient(#D9D5C6 .6px, transparent .6px);
-    background-size: 22px 22px;
     color: var(--text-primary);
     min-height: 100vh;
     padding: 0;
     font-size: 15px;
     line-height: 1.5;
-    -webkit-font-smoothing: antialiased;
   }
 
   /* ── Header ── */
   header {
     background: var(--surface);
-    border-bottom: 2px solid var(--text-primary);
+    border-bottom: 0.5px solid var(--border);
     padding: 0 2rem;
-    height: 64px;
+    height: 56px;
     display: flex;
     align-items: center;
-    gap: 14px;
+    gap: 10px;
     position: sticky;
     top: 0;
     z-index: 10;
   }
   .logo-mark {
-    width: 14px; height: 14px;
+    width: 28px; height: 28px;
     background: var(--accent);
-    border-radius: 50%;
-    display: inline-block;
-    flex-shrink: 0;
-    box-shadow: 0 0 0 5px var(--accent-light);
+    border-radius: 7px;
+    display: flex; align-items: center; justify-content: center;
   }
-  .logo-name {
-    font-family: 'Bricolage Grotesque', sans-serif;
-    font-size: 1.6rem; font-weight: 800; letter-spacing: -0.03em;
-    color: var(--text-primary); line-height: 1;
+  .logo-mark svg { display: block; }
+  .logo-name { font-size: 15px; font-weight: 600; letter-spacing: -0.01em; color: var(--text-primary); }
+  .logo-tag { font-size: 12px; color: var(--text-hint); }
+  .header-nav { display: flex; align-items: center; gap: 6px; margin-left: auto; }
+  .nav-tool-link {
+    font-size: 12px; font-weight: 500;
+    color: var(--text-secondary);
+    text-decoration: none;
+    padding: 5px 10px;
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    white-space: nowrap;
+    transition: background 0.12s, color 0.12s, border-color 0.12s;
   }
-  .logo-sub {
-    font-size: .78rem; color: var(--text-hint); font-weight: 500;
-    margin-left: 2px;
-  }
-  .logo-tag { font-size: 12px; color: var(--text-hint); margin-left: auto; }
-  .nav-back {
-    margin-left: auto;
-    display: inline-flex; align-items: center;
-    font-family: 'Hanken Grotesk', sans-serif; font-size: .82rem; font-weight: 600;
-    color: var(--accent); text-decoration: none; white-space: nowrap;
-    border: 1px solid var(--accent); border-radius: 8px;
-    padding: 6px 13px; transition: .15s; flex-shrink: 0;
-  }
-  .nav-back:hover { background: var(--accent-light); }
+  .nav-tool-link:hover { background: var(--accent-light); color: var(--accent-text); border-color: rgba(44,95,246,0.25); }
 
   /* ── Main layout ── */
   main {
@@ -97,9 +83,8 @@
   /* ── Hero ── */
   .hero { text-align: center; margin-bottom: 2.5rem; }
   .hero h1 {
-    font-family: 'Bricolage Grotesque', sans-serif;
     font-size: 2rem;
-    font-weight: 800;
+    font-weight: 700;
     letter-spacing: -0.03em;
     line-height: 1.15;
     color: var(--text-primary);
@@ -338,39 +323,67 @@
     display: flex; align-items: center; justify-content: center; gap: 5px;
   }
 
+  /* ── File type badge ── */
+  .type-badge {
+    display: inline-flex; align-items: center;
+    font-size: 10px; font-weight: 600; letter-spacing: 0.03em;
+    padding: 2px 6px; border-radius: 4px;
+    vertical-align: middle; margin-left: 5px;
+    text-transform: uppercase;
+  }
+  .type-pdf  { background: #EDF1FE; color: #1741C4; }
+  .type-img  { background: #EAF3DE; color: #3B6D11; }
+
+  /* ── Image thumbnail ── */
+  .file-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 4px; }
+
   @media (max-width: 600px) {
     main { padding: 2rem 1rem 3rem; }
     .hero h1 { font-size: 1.5rem; }
     header { padding: 0 1rem; }
-    .logo-tag { display: none; }
+    .nav-tool-link:not(:last-child) { display: none; }
   }
 </style>
 </head>
 <body>
 
 <header>
-  <span class="logo-mark"></span>
-  <span class="logo-name">ReconFiles</span>
-  <span class="logo-sub">PDF Merger</span>
-  <a href="../" class="nav-back">← CSV Reconciliation</a>
+  <a href="/" style="display:flex; align-items:center; gap:10px; text-decoration:none;">
+    <div class="logo-mark">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <rect x="3" y="1" width="7" height="9" rx="1.5" fill="white" opacity="0.9"/>
+        <rect x="6" y="6" width="7" height="9" rx="1.5" fill="white" opacity="0.6"/>
+        <line x1="8" y1="11" x2="12" y2="11" stroke="rgba(44,95,246,0.8)" stroke-width="1.5"/>
+      </svg>
+    </div>
+    <span class="logo-name">ReconFiles</span>
+  </a>
+  <nav class="header-nav" aria-label="Site navigation">
+    <a class="nav-tool-link" href="freepdf/">Free PDF Toolkit</a>
+    <a class="nav-tool-link" href="how-to-use.html">How to use</a>
+    <a class="nav-tool-link" href="about.html">About</a>
+  </nav>
 </header>
 
 <main>
   <div class="hero">
-    <h1>Merge PDFs in seconds</h1>
-    <p>Drag to reorder, then download your combined file. Nothing is uploaded to any server.</p>
+    <h1>Merge PDFs & images in seconds</h1>
+    <p>Mix PDFs, JPGs, PNGs and WebPs in any order. Download as a single PDF. Nothing leaves your device.</p>
   </div>
 
   <!-- Drop zone (shown when no files) -->
   <div class="dropzone" id="dropzone">
-    <input type="file" accept="application/pdf" multiple id="fileInput" />
+    <input type="file" accept="application/pdf,image/jpeg,image/png,image/webp" multiple id="fileInput" />
     <svg class="dz-icon" width="40" height="40" viewBox="0 0 40 40" fill="none">
-      <rect x="6" y="4" width="18" height="24" rx="3" fill="#D3D1C7"/>
-      <rect x="16" y="12" width="18" height="24" rx="3" fill="#B4B2A9"/>
-      <path d="M22 26l4-4 4 4M26 22v10" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+      <rect x="4" y="4" width="18" height="24" rx="3" fill="#D3D1C7"/>
+      <rect x="14" y="12" width="18" height="24" rx="3" fill="#B4B2A9"/>
+      <path d="M20 28l4-4 4 4M24 24v10" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+      <rect x="6" y="6" width="10" height="8" rx="1.5" fill="#9C9B96" opacity="0.5"/>
+      <circle cx="8.5" cy="8.5" r="1.2" fill="white" opacity="0.7"/>
+      <path d="M6 12l3-2.5 2 2 2-3 3 3.5" stroke="white" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.7"/>
     </svg>
-    <div class="dz-title">Drop PDF files here</div>
-    <div class="dz-sub">or click to browse</div>
+    <div class="dz-title">Drop PDFs or images here</div>
+    <div class="dz-sub">PDF, JPG, PNG, WebP supported · each image becomes one page</div>
     <div class="dz-btn">Choose files</div>
   </div>
 
@@ -379,7 +392,7 @@
 
   <!-- Add more (shown when files exist) -->
   <button class="add-more-btn" id="addMoreBtn" style="display:none;">
-    <input type="file" accept="application/pdf" multiple id="addMoreInput" />
+    <input type="file" accept="application/pdf,image/jpeg,image/png,image/webp" multiple id="addMoreInput" />
     <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><line x1="7" y1="2" x2="7" y2="12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="2" y1="7" x2="12" y2="7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
     Add more PDFs
   </button>
@@ -479,6 +492,12 @@ function formatBytes(bytes) {
   return (bytes/1048576).toFixed(1) + ' MB';
 }
 
+const IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
+const ACCEPT_TYPES = ['application/pdf', ...IMAGE_TYPES];
+
+function isImage(file) { return IMAGE_TYPES.includes(file.type) || /\.(jpe?g|png|webp)$/i.test(file.name); }
+function isPdf(file)   { return file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf'); }
+
 async function getPdfPageCount(file) {
   try {
     const buf = await file.arrayBuffer();
@@ -487,14 +506,45 @@ async function getPdfPageCount(file) {
   } catch { return null; }
 }
 
-async function addFiles(newFiles) {
-  const pdfFiles = Array.from(newFiles).filter(f => f.type === 'application/pdf' || f.name.endsWith('.pdf'));
-  if (pdfFiles.length === 0) { showToast('Please select PDF files only.', 'error'); return; }
+function getImageDimensions(file) {
+  return new Promise((resolve, reject) => {
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => { resolve({ w: img.naturalWidth, h: img.naturalHeight }); URL.revokeObjectURL(url); };
+    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('Could not read image')); };
+    img.src = url;
+  });
+}
 
-  for (const file of pdfFiles) {
-    const pages = await getPdfPageCount(file);
-    if (pages === null) { showToast(`Could not read "${file.name}" — it may be password-protected.`, 'error'); continue; }
-    files.push({ file, name: file.name.replace(/\.pdf$/i, ''), id: idCounter++, pages, size: file.size });
+function getImagePreviewUrl(file) {
+  return URL.createObjectURL(file);
+}
+
+async function addFiles(newFiles) {
+  const eligible = Array.from(newFiles).filter(f => isPdf(f) || isImage(f));
+  if (eligible.length === 0) {
+    showToast('Please select PDF or image files (JPG, PNG, WebP).', 'error');
+    return;
+  }
+
+  for (const file of eligible) {
+    if (isPdf(file)) {
+      const pages = await getPdfPageCount(file);
+      if (pages === null) {
+        showToast(`Could not read "${file.name}" — it may be password-protected.`, 'error');
+        continue;
+      }
+      files.push({ file, kind: 'pdf', name: file.name.replace(/\.pdf$/i, ''), id: idCounter++, pages, size: file.size, previewUrl: null });
+    } else {
+      try {
+        const dims = await getImageDimensions(file);
+        const previewUrl = getImagePreviewUrl(file);
+        const ext = file.name.match(/\.[^.]+$/)?.[0] || '';
+        files.push({ file, kind: 'image', name: file.name.slice(0, -ext.length) || file.name, id: idCounter++, pages: 1, size: file.size, dims, previewUrl });
+      } catch {
+        showToast(`Could not read image "${file.name}".`, 'error');
+      }
+    }
   }
   renderList();
 }
@@ -521,8 +571,8 @@ function renderList() {
   optionsPanel.style.display = hasFiles ? 'block' : 'none';
   mergeBtn.disabled = files.length < 2;
   mergeBtnText.textContent = files.length < 2
-    ? (files.length === 1 ? 'Add at least one more PDF' : 'Merge PDFs')
-    : `Merge ${files.length} PDFs`;
+    ? (files.length === 1 ? 'Add at least one more file' : 'Merge files')
+    : `Merge ${files.length} files`;
 
   fileListEl.innerHTML = '';
   files.forEach((f, idx) => {
@@ -531,7 +581,21 @@ function renderList() {
     item.dataset.id = f.id;
     item.draggable = true;
 
+    const isImg = f.kind === 'image';
     const pageWord = f.pages === 1 ? 'page' : 'pages';
+    const dimStr = isImg && f.dims ? ` · ${f.dims.w}×${f.dims.h}px` : '';
+    const dispName = isImg ? f.name : f.name + '.pdf';
+    const badgeClass = isImg ? 'type-img' : 'type-pdf';
+    const badgeLabel = isImg ? (f.file.name.match(/\.[^.]+$/)?.[0]?.slice(1).toUpperCase() || 'IMG') : 'PDF';
+    const thumbHtml = isImg
+      ? `<img src="${f.previewUrl}" alt="" />`
+      : `<svg width="18" height="20" viewBox="0 0 18 20" fill="none">
+          <rect x="1" y="1" width="12" height="16" rx="2" fill="#EDF1FE" stroke="#2C5FF6" stroke-width="0.8" opacity="0.7"/>
+          <path d="M7 1v4h6" fill="none" stroke="#2C5FF6" stroke-width="0.8" opacity="0.5"/>
+          <line x1="3.5" y1="9" x2="10.5" y2="9" stroke="#2C5FF6" stroke-width="0.8" opacity="0.5"/>
+          <line x1="3.5" y1="11.5" x2="10.5" y2="11.5" stroke="#2C5FF6" stroke-width="0.8" opacity="0.5"/>
+          <line x1="3.5" y1="14" x2="8" y2="14" stroke="#2C5FF6" stroke-width="0.8" opacity="0.5"/>
+        </svg>`;
 
     item.innerHTML = `
       <div class="drag-handle" title="Drag to reorder">
@@ -545,18 +609,10 @@ function renderList() {
         </svg>
       </div>
       <div class="file-order">${idx + 1}</div>
-      <div class="file-thumb">
-        <svg width="18" height="20" viewBox="0 0 18 20" fill="none">
-          <rect x="1" y="1" width="12" height="16" rx="2" fill="#EDF1FE" stroke="#2C5FF6" stroke-width="0.8" opacity="0.7"/>
-          <path d="M7 1v4h6" fill="none" stroke="#2C5FF6" stroke-width="0.8" opacity="0.5"/>
-          <line x1="3.5" y1="9" x2="10.5" y2="9" stroke="#2C5FF6" stroke-width="0.8" opacity="0.5"/>
-          <line x1="3.5" y1="11.5" x2="10.5" y2="11.5" stroke="#2C5FF6" stroke-width="0.8" opacity="0.5"/>
-          <line x1="3.5" y1="14" x2="8" y2="14" stroke="#2C5FF6" stroke-width="0.8" opacity="0.5"/>
-        </svg>
-      </div>
+      <div class="file-thumb">${thumbHtml}</div>
       <div class="file-info">
-        <div class="file-name" title="${f.name}.pdf">${f.name}.pdf</div>
-        <div class="file-meta">${f.pages} ${pageWord} · ${formatBytes(f.size)}</div>
+        <div class="file-name" title="${dispName}">${dispName}<span class="type-badge ${badgeClass}">${badgeLabel}</span></div>
+        <div class="file-meta">${f.pages} ${pageWord}${dimStr} · ${formatBytes(f.size)}</div>
       </div>
       <div class="move-btns">
         <button title="Move up" data-dir="-1" data-id="${f.id}" ${idx === 0 ? 'disabled' : ''}>
@@ -614,6 +670,39 @@ function clearDragTargets() {
   document.querySelectorAll('.file-item.drop-target').forEach(el => el.classList.remove('drop-target'));
 }
 
+// ── Embed image as a full-page PDF page ──
+async function embedImagePage(merged, file) {
+  const buf = await file.arrayBuffer();
+  let img;
+  if (file.type === 'image/png') {
+    img = await merged.embedPng(buf);
+  } else {
+    // JPEG and WebP — pdf-lib accepts JPEG natively; WebP is decoded via canvas first
+    if (file.type === 'image/webp') {
+      const dataUrl = await new Promise(res => {
+        const canvas = document.createElement('canvas');
+        const imgEl = new Image();
+        imgEl.onload = () => {
+          canvas.width = imgEl.naturalWidth;
+          canvas.height = imgEl.naturalHeight;
+          canvas.getContext('2d').drawImage(imgEl, 0, 0);
+          res(canvas.toDataURL('image/jpeg', 0.92));
+        };
+        imgEl.src = URL.createObjectURL(file);
+      });
+      const base64 = dataUrl.split(',')[1];
+      const jpgBuf = Uint8Array.from(atob(base64), c => c.charCodeAt(0)).buffer;
+      img = await merged.embedJpg(jpgBuf);
+    } else {
+      img = await merged.embedJpg(buf);
+    }
+  }
+  const { width, height } = img;
+  const page = merged.addPage([width, height]);
+  page.drawImage(img, { x: 0, y: 0, width, height });
+  return page;
+}
+
 // ── Merge ──
 async function mergePDFs() {
   if (files.length < 2) return;
@@ -627,31 +716,45 @@ async function mergePDFs() {
     const addBookmarks = addBookmarksCheck.checked;
 
     for (let i = 0; i < files.length; i++) {
-      const buf = await files[i].file.arrayBuffer();
       progressFill.style.width = (10 + (i / files.length) * 75) + '%';
-      const src = await PDFLib.PDFDocument.load(buf, { ignoreEncryption: true });
-      const pageIdxs = src.getPageIndices();
-      const copiedPages = await merged.copyPages(src, pageIdxs);
+      const f = files[i];
 
-      if (addBookmarks) {
+      if (f.kind === 'image') {
         const startPageIdx = merged.getPageCount();
-        copiedPages.forEach(p => merged.addPage(p));
-        try {
-          const dest = PDFLib.PDFArray.withContext(merged.context);
-          const ref = merged.getPage(startPageIdx).ref;
-          dest.push(ref);
-          dest.push(PDFLib.PDFName.of('XYZ'));
-          dest.push(PDFLib.PDFNull);
-          dest.push(PDFLib.PDFNull);
-          dest.push(PDFLib.PDFNull);
-          const outline = merged.context.obj({
-            Title: PDFLib.PDFHexString.fromText(files[i].name),
-            Dest: dest,
-          });
-          merged.context.assign(merged.context.nextRef(), outline);
-        } catch(e) { /* bookmarks are best-effort */ }
+        await embedImagePage(merged, f.file);
+        if (addBookmarks) {
+          try {
+            const dest = PDFLib.PDFArray.withContext(merged.context);
+            dest.push(merged.getPage(startPageIdx).ref);
+            dest.push(PDFLib.PDFName.of('XYZ'));
+            dest.push(PDFLib.PDFNull); dest.push(PDFLib.PDFNull); dest.push(PDFLib.PDFNull);
+            merged.context.assign(merged.context.nextRef(), merged.context.obj({
+              Title: PDFLib.PDFHexString.fromText(f.name),
+              Dest: dest,
+            }));
+          } catch(e) {}
+        }
       } else {
-        copiedPages.forEach(p => merged.addPage(p));
+        const buf = await f.file.arrayBuffer();
+        const src = await PDFLib.PDFDocument.load(buf, { ignoreEncryption: true });
+        const copiedPages = await merged.copyPages(src, src.getPageIndices());
+
+        if (addBookmarks) {
+          const startPageIdx = merged.getPageCount();
+          copiedPages.forEach(p => merged.addPage(p));
+          try {
+            const dest = PDFLib.PDFArray.withContext(merged.context);
+            dest.push(merged.getPage(startPageIdx).ref);
+            dest.push(PDFLib.PDFName.of('XYZ'));
+            dest.push(PDFLib.PDFNull); dest.push(PDFLib.PDFNull); dest.push(PDFLib.PDFNull);
+            merged.context.assign(merged.context.nextRef(), merged.context.obj({
+              Title: PDFLib.PDFHexString.fromText(f.name),
+              Dest: dest,
+            }));
+          } catch(e) {}
+        } else {
+          copiedPages.forEach(p => merged.addPage(p));
+        }
       }
     }
 
@@ -669,7 +772,12 @@ async function mergePDFs() {
     setTimeout(() => URL.revokeObjectURL(url), 5000);
 
     const totalPages = files.reduce((s, f) => s + f.pages, 0);
-    showToast(`✓ Merged ${files.length} PDFs (${totalPages} pages) — downloading now`, 'success');
+    const imgCount = files.filter(f => f.kind === 'image').length;
+    const pdfCount = files.length - imgCount;
+    const parts = [];
+    if (pdfCount) parts.push(`${pdfCount} PDF${pdfCount > 1 ? 's' : ''}`);
+    if (imgCount) parts.push(`${imgCount} image${imgCount > 1 ? 's' : ''}`);
+    showToast(`✓ Merged ${parts.join(' + ')} (${totalPages} pages) — downloading`, 'success');
 
   } catch (err) {
     console.error(err);
@@ -677,7 +785,7 @@ async function mergePDFs() {
   } finally {
     setTimeout(() => {
       mergeBtn.disabled = files.length < 2;
-      mergeBtnText.textContent = `Merge ${files.length} PDFs`;
+      mergeBtnText.textContent = `Merge ${files.length} files`;
       progressWrap.style.display = 'none';
       progressFill.style.width = '0%';
     }, 800);
@@ -700,12 +808,11 @@ dropzone.addEventListener('drop', e => {
 
 // Paste support
 document.addEventListener('paste', e => {
-  const pdfItems = Array.from(e.clipboardData.files).filter(f => f.type === 'application/pdf');
-  if (pdfItems.length) addFiles(pdfItems);
+  const items = Array.from(e.clipboardData.files).filter(f => isPdf(f) || isImage(f));
+  if (items.length) addFiles(items);
 });
 
 renderList();
 </script>
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5912433991207295" crossorigin="anonymous"></script>
 </body>
 </html>
