@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How to reconcile a Stripe or GoCardless payout against your accounting system | ReconFiles</title>
+<meta name="description" content="Payment processors bundle many payments into one payout, net of fees. Here's how the payout structure works and how to match it back to individual invoices cleanly.">
+<meta name="author" content="ReconFiles">
+<link rel="canonical" href="https://reconfiles.co.uk/blog/reconcile-stripe-payouts.html">
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://reconfiles.co.uk/blog/reconcile-stripe-payouts.html">
+<meta property="og:title" content="How to reconcile a Stripe or GoCardless payout against your accounting system">
+<meta property="og:description" content="Payment processors bundle many payments into one payout, net of fees. Here's how the payout structure works and how to match it back to individual invoices cleanly.">
+<meta property="og:image" content="https://reconfiles.co.uk/og-image.png">
+<meta property="og:site_name" content="ReconFiles">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "HowTo",
+  "headline": "How to reconcile a Stripe or GoCardless payout against your accounting system",
+  "description": "Payment processors bundle many payments into one payout, net of fees. Here's how the payout structure works and how to match it back to individual invoices cleanly.",
+  "url": "https://reconfiles.co.uk/blog/reconcile-stripe-payouts.html",
+  "author": { "@type": "Organization", "name": "ReconFiles" },
+  "publisher": {
+    "@type": "Organization", "name": "ReconFiles",
+    "logo": { "@type": "ImageObject", "url": "https://reconfiles.co.uk/og-image.png" }
+  },
+  "mainEntityOfPage": "https://reconfiles.co.uk/blog/reconcile-stripe-payouts.html"
+}
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F1EEE4;--surface:#FBFAF5;--surface-2:#F6F4EB;
+    --ink:#1B1A15;--muted:#6E6C61;--faint:#9B998D;
+    --line:#D9D5C6;--line-strong:#C5C0AD;
+    --accent:#15573B;--accent-hover:#0F4530;--matched-bg:#E2EFE7;
+    --b-only:#A86C12;--b-only-bg:#F3EAD7;--mismatch:#BC3B2B;--mismatch-bg:#F4E2DE;
+    --radius:14px;--shadow:0 1px 2px rgba(27,26,21,.04), 0 8px 24px -12px rgba(27,26,21,.18);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    font-family:'Hanken Grotesk',sans-serif;background:var(--paper);color:var(--ink);
+    -webkit-font-smoothing:antialiased;line-height:1.7;
+    background-image:radial-gradient(var(--line) .6px, transparent .6px);background-size:22px 22px;
+  }
+  .wrap{max-width:760px;margin:0 auto;padding:42px 28px 80px;}
+  header{
+    display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap;
+    border-bottom:2px solid var(--ink);padding-bottom:22px;margin-bottom:40px;
+  }
+  .brand{display:flex;align-items:baseline;gap:12px;text-decoration:none;color:inherit;}
+  .brand h1{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;
+    font-size:clamp(1.4rem,4vw,1.9rem);letter-spacing:-.03em;line-height:.95;}
+  .brand .mark{width:11px;height:11px;border-radius:50%;background:var(--accent);
+    flex-shrink:0;box-shadow:0 0 0 4px var(--matched-bg);}
+  .nav-links{display:flex;gap:9px;flex-wrap:wrap;}
+  a.nav-link,a.nav-link:link,a.nav-link:visited{
+    display:inline-flex;align-items:center;font-family:'Hanken Grotesk',sans-serif;
+    font-size:.8rem;font-weight:600;color:var(--accent);text-decoration:none;white-space:nowrap;
+    border:1px solid var(--accent);border-radius:8px;padding:5px 12px;transition:.15s;
+  }
+  a.nav-link:hover{background:var(--matched-bg);}
+
+  .breadcrumb{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--faint);
+    margin-bottom:22px;}
+  .breadcrumb a{color:var(--accent);text-decoration:none;}
+  .breadcrumb a:hover{text-decoration:underline;}
+
+  .article-head{margin-bottom:34px;}
+  .article-eyebrow{font-family:'JetBrains Mono',monospace;font-size:.7rem;font-weight:700;
+    letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:14px;
+    display:flex;gap:12px;align-items:center;flex-wrap:wrap;}
+  .article-eyebrow .read{color:var(--faint);}
+  h1.article-title{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;
+    font-size:clamp(1.9rem,5vw,2.6rem);letter-spacing:-.03em;line-height:1.12;margin-bottom:18px;}
+  .article-lead{font-size:1.12rem;color:var(--muted);line-height:1.6;}
+
+  article{font-size:1rem;color:var(--ink);}
+  article h2{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;
+    font-size:1.5rem;letter-spacing:-.02em;margin:38px 0 14px;line-height:1.25;}
+  article h3{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;
+    font-size:1.15rem;letter-spacing:-.01em;margin:28px 0 10px;}
+  article p{margin-bottom:16px;color:var(--muted);}
+  article strong{color:var(--ink);font-weight:600;}
+  article ul,article ol{margin:0 0 18px 0;padding-left:0;list-style:none;
+    display:flex;flex-direction:column;gap:9px;}
+  article ul li{display:flex;gap:11px;align-items:flex-start;color:var(--muted);}
+  article ul li::before{content:"";width:6px;height:6px;border-radius:50%;
+    background:var(--accent);flex-shrink:0;margin-top:9px;}
+  article ol{counter-reset:steps;}
+  article ol li{display:flex;gap:13px;align-items:flex-start;color:var(--muted);
+    counter-increment:steps;}
+  article ol li::before{content:counter(steps);font-family:'JetBrains Mono',monospace;
+    font-size:.72rem;font-weight:700;background:var(--ink);color:var(--paper);
+    min-width:22px;height:22px;border-radius:6px;display:grid;place-items:center;
+    flex-shrink:0;margin-top:2px;}
+  article ul li strong,article ol li strong{color:var(--ink);}
+  article code{font-family:'JetBrains Mono',monospace;font-size:.85em;
+    background:var(--surface-2);border:1px solid var(--line);padding:1px 6px;
+    border-radius:5px;color:var(--ink);}
+  article a{color:var(--accent);text-decoration:underline;text-underline-offset:3px;}
+  article a:hover{color:var(--accent-hover);}
+  .callout{background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--accent);
+    border-radius:10px;padding:16px 18px;margin:22px 0;box-shadow:var(--shadow);}
+  .callout p{margin:0;font-size:.92rem;}
+  .callout .callout-label{font-family:'JetBrains Mono',monospace;font-size:.66rem;font-weight:700;
+    letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin-bottom:6px;display:block;}
+  .example-box{background:var(--surface-2);border:1px solid var(--line);border-radius:10px;
+    padding:18px;margin:22px 0;font-size:.92rem;}
+  .example-box .eg-label{font-family:'JetBrains Mono',monospace;font-size:.66rem;font-weight:700;
+    letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin-bottom:10px;}
+  .example-box table{width:100%;border-collapse:collapse;font-size:.85rem;margin-top:6px;}
+  .example-box th{text-align:left;font-family:'JetBrains Mono',monospace;font-size:.68rem;
+    text-transform:uppercase;letter-spacing:.05em;color:var(--muted);padding:6px 10px;
+    border-bottom:1.5px solid var(--line-strong);}
+  .example-box td{padding:6px 10px;border-bottom:1px solid var(--line);color:var(--ink);
+    font-family:'JetBrains Mono',monospace;font-size:.8rem;}
+
+  .tool-cta{background:var(--accent);border-radius:var(--radius);padding:26px 24px;
+    margin:36px 0;text-align:center;}
+  .tool-cta h3{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;color:#fff;
+    font-size:1.3rem;margin:0 0 6px;letter-spacing:-.02em;}
+  .tool-cta p{color:rgba(255,255,255,.85);font-size:.9rem;margin:0 0 16px;}
+  .tool-cta a{display:inline-flex;align-items:center;gap:8px;background:#fff;color:var(--accent);
+    font-weight:600;font-size:.92rem;text-decoration:none;border-radius:9px;padding:11px 22px;
+    transition:.15s;}
+  .tool-cta a:hover{background:var(--matched-bg);}
+
+  .related{margin-top:48px;padding-top:28px;border-top:1px solid var(--line);}
+  .related h3{font-family:'JetBrains Mono',monospace;font-size:.7rem;font-weight:700;
+    letter-spacing:.12em;text-transform:uppercase;color:var(--faint);margin-bottom:16px;}
+  .related-list{display:flex;flex-direction:column;gap:12px;}
+  .related a{text-decoration:none;color:var(--ink);font-weight:600;font-size:.95rem;
+    display:flex;gap:8px;align-items:baseline;transition:.15s;}
+  .related a:hover{color:var(--accent);}
+  .related a .ra{color:var(--accent);}
+
+  footer{margin-top:48px;padding-top:20px;border-top:1px solid var(--line);
+    font-size:.76rem;color:var(--faint);display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;}
+  footer b{color:var(--muted);font-weight:600;}
+  footer a{color:var(--faint);text-decoration:none;}
+  footer a:hover{color:var(--muted);}
+  footer .adsbygoogle{flex-basis:100%;margin-bottom:18px;}
+
+  @media(max-width:640px){
+    .wrap{padding:28px 16px 60px;}
+    .nav-links{display:none;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <a class="brand" href="/">
+      <span class="mark"></span>
+      <h1>ReconFiles</h1>
+    </a>
+    <nav class="nav-links">
+      <a href="/" class="nav-link">CSV Reconciliation</a>
+      <a href="/freepdf/" class="nav-link">PDF Toolkit</a>
+      <a href="/blog/" class="nav-link">Blog</a>
+      <a href="/about.html" class="nav-link">About</a>
+    </nav>
+  </header>
+
+  <div class="breadcrumb"><a href="/blog/">Blog</a> / Guide</div>
+
+  <div class="article-head">
+    <div class="article-eyebrow"><span>Guide</span><span class="read">9 min read</span></div>
+    <h1 class="article-title">How to reconcile a Stripe or GoCardless payout against your accounting system</h1>
+    <p class="article-lead">Payment processors bundle many customer payments into one payout, which makes reconciliation tricky. Here's how the payout structure works and how to match it back to individual invoices.</p>
+  </div>
+
+  <article>
+
+    <p>Reconciling a payment processor like Stripe or GoCardless against your accounting system trips people up for one specific reason: the money doesn't arrive the way it was collected. A processor gathers up dozens or hundreds of individual customer payments and deposits them into your bank as a single lump sum — a <strong>payout</strong>. Your accounting system, meanwhile, knows about the individual payments. Matching one bundled deposit back to many individual records is the whole challenge.</p>
+    <p>This guide explains how payouts are structured and how to reconcile them cleanly.</p>
+
+    <h2>Why processor reconciliation is different</h2>
+    <p>When a customer pays you £50 through Stripe, that £50 doesn't land in your bank account immediately or individually. Instead, Stripe holds it, groups it with other payments collected around the same time, deducts its fees, and transfers the net total to your bank a few days later.</p>
+    <p>So a single £2,340 payout hitting your bank might represent:</p>
+    <ul>
+      <li>52 individual customer payments totalling £2,415 in gross charges,</li>
+      <li>minus £75 in processing fees,</li>
+      <li>equalling the £2,340 net that actually arrived.</li>
+    </ul>
+    <p>Your bank statement shows one line: £2,340. Your sales records show 52 lines. Reconciliation means proving those two views agree.</p>
+
+    <div class="callout">
+      <span class="callout-label">The core issue</span>
+      <p>You're reconciling a <strong>one-to-many</strong> relationship: one payout on the bank side maps to many payments on the sales side, with fees making the totals deliberately unequal.</p>
+    </div>
+
+    <h2>The two things you need to match</h2>
+    <p>There are really two reconciliations happening, and separating them makes life much easier:</p>
+    <ol>
+      <li><strong>Gross payments to your sales records.</strong> Every individual charge the processor reports should correspond to a sale, invoice, or order in your system. This confirms you've recorded all your income.</li>
+      <li><strong>Net payout to your bank statement.</strong> The total transferred, after fees, should match the deposit that landed in your bank. This confirms the money actually arrived.</li>
+    </ol>
+    <p>The bridge between the two is the fee. Gross charges minus fees equals net payout. If that equation holds, the payout reconciles.</p>
+
+    <h2>Step-by-step reconciliation</h2>
+    <ol>
+      <li><strong>Export the payout breakdown.</strong> Both Stripe and GoCardless let you download a report showing every transaction included in a given payout, with the gross amount, fee, and net for each. This is the file that ties everything together.</li>
+      <li><strong>Export your sales records for the same period.</strong> From your accounting system or CRM, pull the invoices or payments that should correspond to those charges.</li>
+      <li><strong>Match on a shared reference.</strong> Both files should share something — a payment reference, invoice number, customer reference, or transaction ID. This is your matching key.</li>
+      <li><strong>Compare gross amounts.</strong> For each matched reference, check the gross charge in the processor report against the amount in your sales records. They should agree.</li>
+      <li><strong>Account for fees separately.</strong> Fees are a cost, not a discrepancy. Record them as an expense so your net figures line up without appearing as "missing" money.</li>
+      <li><strong>Confirm the payout total.</strong> The sum of net amounts in the payout report should equal the deposit on your bank statement.</li>
+    </ol>
+
+    <h2>Where it commonly goes wrong</h2>
+    <h3>Forgetting the fees</h3>
+    <p>The single most common mistake is comparing gross sales directly to the net bank deposit and panicking that money is missing. It isn't — the gap is the processor's fee. Always reconcile gross-to-sales and net-to-bank as two separate checks, with fees explaining the difference.</p>
+
+    <h3>Timing across periods</h3>
+    <p>A payment collected on the 31st might not be paid out until the 3rd of the following month. At month-end, you'll have charges recorded that haven't yet appeared as a payout. This is a normal timing difference — the money is in transit, exactly like a deposit in transit in a <a href="/blog/bank-reconciliation-guide.html">standard bank reconciliation</a>.</p>
+
+    <h3>Refunds and chargebacks</h3>
+    <p>A refund reduces a later payout, and a chargeback can appear as a separate deduction. These need matching back to the original transaction so they don't look like unexplained reductions.</p>
+
+    <h3>Multiple payments under one reference</h3>
+    <p>If a single customer reference covers several payments — say a subscription billed monthly — you'll have one reference appearing on multiple rows. Sum the rows sharing that reference before comparing totals, rather than trying to match line by line.</p>
+
+    <div class="tool-cta">
+      <h3>Match the payout export to your sales file</h3>
+      <p>Upload the processor's transaction report and your sales export — ReconFiles matches them on a shared reference and shows what doesn't line up.</p>
+      <a href="/">Try the reconciliation tool →</a>
+    </div>
+
+    <h2>The bottom line</h2>
+    <p>Reconciling a Stripe or GoCardless payout feels hard only because the money arrives bundled and net of fees. Break it into two questions — do the gross charges match my sales, and does the net payout match my bank deposit — and the fee neatly explains the gap between them. Once you're thinking in those terms, a payout that looked like a mystery deposit becomes a straightforward match.</p>
+
+  </article>
+
+  <div class="related">
+    <h3>Related guides</h3>
+    <div class="related-list">
+      <a href="/blog/bank-reconciliation-guide.html"><span class="ra">→</span> Bank reconciliation explained: a step-by-step guide</a>
+      <a href="/blog/how-to-reconcile-two-csv-files.html"><span class="ra">→</span> How to reconcile two CSV files without Excel formulas</a>
+      <a href="/blog/foreign-currency-reconciliation.html"><span class="ra">→</span> How to handle foreign currency differences when reconciling</a>
+    </div>
+  </div>
+
+  <footer>
+    <ins class="adsbygoogle" style="display:block;width:100%;"
+         data-ad-client="ca-pub-5912433991207295" data-ad-slot="7756971595"
+         data-ad-format="auto" data-full-width-responsive="true"></ins>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    <span>© 2025 <b>ReconFiles</b> · <a href="https://reconfiles.co.uk">reconfiles.co.uk</a></span>
+    <span>🔒 All processing happens in your browser — your files are never uploaded anywhere.</span>
+  </footer>
+
+</div>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5912433991207295" crossorigin="anonymous"></script>
+</body>
+</html>

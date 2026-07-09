@@ -1,0 +1,1037 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PDF Toolkit — Merge & Edit PDFs Free | ReconFiles</title>
+<meta name="description" content="Free online PDF toolkit. Merge multiple PDFs into one and add or replace text on any page — entirely in your browser. Nothing uploaded, no account needed.">
+<meta name="author" content="ReconFiles">
+<link rel="canonical" href="https://reconfiles.co.uk/freepdf/">
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://reconfiles.co.uk/freepdf/">
+<meta property="og:title" content="PDF Toolkit — Merge & Edit PDFs Free | ReconFiles">
+<meta property="og:description" content="Merge multiple PDFs and add or replace text on any page — free, private, runs entirely in your browser.">
+<meta property="og:image" content="https://reconfiles.co.uk/og-image.png">
+<meta property="og:site_name" content="ReconFiles">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Hanken+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F1EEE4; --surface:#FBFAF5; --surface-2:#F6F4EB;
+    --ink:#1B1A15; --muted:#6E6C61; --faint:#9B998D;
+    --line:#D9D5C6; --line-strong:#C5C0AD;
+    --accent:#15573B; --accent-hover:#0F4530;
+    --matched:#1F7A52; --matched-bg:#E2EFE7;
+    --a-only:#2A5FA0; --a-only-bg:#E3EAF3;
+    --b-only:#A86C12; --b-only-bg:#F3EAD7;
+    --mismatch:#BC3B2B; --mismatch-bg:#F4E2DE;
+    --radius:14px;
+    --shadow:0 1px 2px rgba(27,26,21,.04), 0 8px 24px -12px rgba(27,26,21,.18);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html,body{height:100%;}
+  body{
+    font-family:'Hanken Grotesk',sans-serif;background:var(--paper);color:var(--ink);
+    -webkit-font-smoothing:antialiased;line-height:1.5;
+    background-image:radial-gradient(var(--line) .6px, transparent .6px);
+    background-size:22px 22px;
+  }
+  .wrap{max-width:1180px;margin:0 auto;padding:42px 28px 80px;}
+
+  /* Header */
+  header{
+    display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap;
+    border-bottom:2px solid var(--ink);padding-bottom:22px;margin-bottom:30px;
+  }
+  .brand{display:flex;align-items:baseline;gap:12px;text-decoration:none;color:inherit;}
+  .brand h1{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;
+    font-size:clamp(1.6rem,4vw,2.2rem);letter-spacing:-.03em;line-height:.95;}
+  .brand .sub{font-size:.82rem;color:var(--faint);font-weight:600;}
+  .brand .mark{width:12px;height:12px;border-radius:50%;background:var(--accent);
+    flex-shrink:0;box-shadow:0 0 0 4px var(--matched-bg);align-self:center;}
+  .nav-links{display:flex;gap:10px;flex-wrap:wrap;}
+  a.nav-link,a.nav-link:link,a.nav-link:visited{
+    display:inline-flex;align-items:center;font-family:'Hanken Grotesk',sans-serif;
+    font-size:.82rem;font-weight:600;color:var(--accent);text-decoration:none;white-space:nowrap;
+    border:1px solid var(--accent);border-radius:8px;padding:6px 13px;transition:.15s;
+  }
+  a.nav-link:hover{background:var(--matched-bg);}
+
+  /* Intro */
+  .intro{margin-bottom:28px;}
+  .intro h2{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;
+    font-size:clamp(1.6rem,4vw,2.3rem);letter-spacing:-.03em;line-height:1.1;margin-bottom:10px;}
+  .intro p{font-size:.95rem;color:var(--muted);max-width:640px;}
+
+  /* Mode tabs */
+  .mode-tabs{display:flex;gap:6px;margin-bottom:26px;flex-wrap:wrap;}
+  .mode-tab{
+    font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:.92rem;
+    background:var(--surface);border:1px solid var(--line-strong);cursor:pointer;
+    padding:11px 20px;border-radius:10px;color:var(--muted);transition:.15s;
+    display:inline-flex;align-items:center;gap:9px;
+  }
+  .mode-tab:hover{border-color:var(--accent);color:var(--ink);}
+  .mode-tab.active{background:var(--accent);color:#fff;border-color:var(--accent);}
+  .mode-tab .ico{font-size:1.05rem;line-height:1;}
+
+  .panel{display:none;}
+  .panel.active{display:block;animation:rise .4s cubic-bezier(.2,.7,.2,1) both;}
+  @keyframes rise{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:none;}}
+
+  /* Drop zone */
+  .drop{
+    position:relative;border:1.5px dashed var(--line-strong);border-radius:var(--radius);
+    background:var(--surface);padding:40px 24px;text-align:center;cursor:pointer;
+    transition:.18s ease;display:flex;flex-direction:column;align-items:center;
+    justify-content:center;gap:10px;min-height:180px;margin-bottom:22px;
+  }
+  .drop:hover{border-color:var(--accent);background:var(--surface-2);}
+  .drop.drag{border-color:var(--accent);background:var(--matched-bg);}
+  .drop .ico{font-size:2rem;line-height:1;}
+  .drop .hint{font-size:.95rem;color:var(--muted);}
+  .drop .hint b{color:var(--accent);font-weight:600;}
+  .drop .sub{font-size:.78rem;color:var(--faint);}
+
+  /* File list (merge) */
+  .file-list{display:flex;flex-direction:column;gap:10px;margin-bottom:22px;}
+  .file-item{
+    display:flex;align-items:center;gap:14px;background:var(--surface);
+    border:1px solid var(--line);border-radius:11px;padding:12px 14px;
+  }
+  .file-item .grip{color:var(--faint);cursor:grab;font-size:1.1rem;flex-shrink:0;}
+  .file-item.dragging{opacity:.5;}
+  .file-item .idx{
+    font-family:'JetBrains Mono',monospace;font-weight:700;font-size:.7rem;
+    background:var(--ink);color:var(--paper);width:24px;height:24px;border-radius:7px;
+    display:grid;place-items:center;flex-shrink:0;
+  }
+  .file-item .fi-name{font-family:'JetBrains Mono',monospace;font-size:.88rem;
+    flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .file-item .fi-meta{font-size:.76rem;color:var(--faint);flex-shrink:0;}
+  .file-item .fi-remove{
+    border:none;background:var(--surface-2);color:var(--muted);width:28px;height:28px;
+    border-radius:7px;cursor:pointer;font-size:1rem;line-height:1;flex-shrink:0;transition:.15s;
+  }
+  .file-item .fi-remove:hover{background:var(--mismatch-bg);color:var(--mismatch);}
+
+  /* Buttons */
+  .actions{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:10px;}
+  .btn{font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:.92rem;border:none;
+    border-radius:10px;padding:11px 22px;cursor:pointer;transition:.16s;
+    display:inline-flex;align-items:center;gap:8px;}
+  .btn-primary{background:var(--accent);color:#fff;}
+  .btn-primary:hover{background:var(--accent-hover);}
+  .btn-primary:disabled{background:var(--line-strong);cursor:not-allowed;color:var(--surface);}
+  .btn-ghost{background:transparent;border:1px solid var(--line-strong);color:var(--muted);}
+  .btn-ghost:hover{border-color:var(--ink);color:var(--ink);}
+  .btn-ghost:disabled{opacity:.5;cursor:not-allowed;}
+  .btn-sm{padding:7px 14px;font-size:.82rem;border-radius:8px;}
+
+  /* Editor layout */
+  .editor-shell{display:grid;grid-template-columns:1fr 280px;gap:20px;align-items:start;}
+  .editor-stage{
+    background:var(--surface-2);border:1px solid var(--line);border-radius:var(--radius);
+    padding:18px;overflow:auto;max-height:78vh;
+  }
+  .page-canvas-wrap{
+    position:relative;margin:0 auto 18px;display:block;width:fit-content;
+    box-shadow:0 4px 18px -6px rgba(27,26,21,.3);background:#fff;
+  }
+  .page-canvas-wrap:last-child{margin-bottom:0;}
+  .page-canvas-wrap canvas{display:block;}
+  .page-overlay{position:absolute;inset:0;cursor:crosshair;}
+  .page-label{
+    font-family:'JetBrains Mono',monospace;font-size:.66rem;color:var(--faint);
+    text-align:center;margin-bottom:6px;letter-spacing:.1em;text-transform:uppercase;
+  }
+  /* Text box element placed on overlay */
+  .edit-box{
+    position:absolute;border:1.5px solid var(--accent);background:rgba(255,255,255,0);
+    min-width:30px;min-height:18px;cursor:move;box-sizing:border-box;
+  }
+  .edit-box.selected{border-color:var(--mismatch);box-shadow:0 0 0 2px var(--mismatch-bg);}
+  .edit-box textarea{
+    width:100%;height:100%;border:none;background:transparent;resize:none;outline:none;
+    font-family:Helvetica,Arial,sans-serif;line-height:1;padding:1px 2px;overflow:hidden;
+    color:#000;
+  }
+  .edit-box .eb-del{
+    position:absolute;top:-10px;right:-10px;width:20px;height:20px;border-radius:50%;
+    background:var(--mismatch);color:#fff;border:none;cursor:pointer;font-size:.7rem;
+    line-height:1;display:none;place-items:center;z-index:5;
+  }
+  .edit-box.selected .eb-del{display:grid;}
+  .edit-box .eb-resize{
+    position:absolute;right:-5px;bottom:-5px;width:12px;height:12px;
+    background:var(--accent);border:2px solid #fff;border-radius:3px;cursor:nwse-resize;
+    display:none;z-index:5;
+  }
+  .edit-box.selected .eb-resize{display:block;}
+
+  /* Inspector sidebar */
+  .inspector{
+    background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
+    padding:18px;box-shadow:var(--shadow);position:sticky;top:18px;
+  }
+  .inspector h3{
+    font-family:'JetBrains Mono',monospace;font-size:.68rem;font-weight:700;
+    letter-spacing:.12em;text-transform:uppercase;color:var(--faint);margin-bottom:14px;
+    display:flex;align-items:center;gap:8px;
+  }
+  .insp-field{margin-bottom:14px;}
+  .insp-field label{display:block;font-size:.78rem;font-weight:600;margin-bottom:5px;}
+  .insp-field .desc{font-size:.72rem;color:var(--faint);margin-top:4px;line-height:1.4;}
+  select,input[type=text],input[type=number]{
+    width:100%;font-family:'Hanken Grotesk',sans-serif;font-size:.85rem;padding:8px 10px;
+    border:1px solid var(--line-strong);border-radius:8px;background:var(--surface);
+    color:var(--ink);transition:.15s;
+  }
+  select:focus,input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--matched-bg);}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .color-row{display:flex;align-items:center;gap:10px;}
+  .color-row input[type=color]{
+    width:44px;height:38px;padding:2px;border:1px solid var(--line-strong);
+    border-radius:8px;cursor:pointer;background:var(--surface);flex-shrink:0;
+  }
+  .color-swatch{
+    width:38px;height:38px;border-radius:8px;border:1px solid var(--line-strong);flex-shrink:0;
+  }
+  .detected{
+    background:var(--surface-2);border:1px solid var(--line);border-radius:9px;
+    padding:10px 12px;font-size:.76rem;color:var(--muted);margin-bottom:14px;line-height:1.5;
+  }
+  .detected b{color:var(--ink);font-weight:600;font-family:'JetBrains Mono',monospace;font-size:.72rem;}
+  .detected .det-empty{color:var(--faint);}
+  .tool-toggle{display:flex;gap:6px;margin-bottom:16px;}
+  .tool-toggle button{
+    flex:1;font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:.78rem;
+    background:var(--surface-2);border:1px solid var(--line-strong);cursor:pointer;
+    padding:9px 6px;border-radius:8px;color:var(--muted);transition:.15s;
+    display:flex;flex-direction:column;align-items:center;gap:3px;
+  }
+  .tool-toggle button .ti{font-size:1.1rem;line-height:1;}
+  .tool-toggle button:hover{border-color:var(--accent);color:var(--ink);}
+  .tool-toggle button.active{background:var(--accent);color:#fff;border-color:var(--accent);}
+  .insp-note{font-size:.72rem;color:var(--faint);line-height:1.5;margin-top:4px;}
+  .insp-divider{height:1px;background:var(--line);margin:16px 0;}
+  .eyedropper-active{cursor:crosshair !important;}
+  .picking-banner{
+    display:none;background:var(--b-only-bg);color:var(--b-only);border:1px solid var(--b-only);
+    border-radius:9px;padding:10px 12px;font-size:.8rem;margin-bottom:16px;font-weight:600;
+    align-items:center;gap:8px;
+  }
+  .picking-banner.show{display:flex;}
+
+  /* Empty editor state */
+  .editor-empty{
+    text-align:center;padding:60px 24px;color:var(--faint);
+  }
+  .editor-empty .big{font-size:2.4rem;margin-bottom:10px;}
+  .editor-empty .ttl{font-weight:600;color:var(--muted);font-size:1rem;margin-bottom:4px;}
+  .editor-empty .sub{font-size:.85rem;}
+
+  /* Info callout */
+  .callout{
+    background:var(--a-only-bg);border:1px solid var(--a-only);border-radius:10px;
+    padding:12px 14px;font-size:.8rem;color:var(--a-only);line-height:1.55;margin-bottom:22px;
+    display:flex;gap:9px;align-items:flex-start;
+  }
+  .callout .ci{font-size:1rem;line-height:1;flex-shrink:0;margin-top:1px;}
+  .callout b{color:#1a3f6b;font-weight:700;}
+
+  .toast{
+    position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);
+    background:var(--ink);color:var(--paper);padding:12px 22px;border-radius:10px;
+    font-size:.88rem;font-weight:500;box-shadow:0 8px 30px -8px rgba(0,0,0,.4);
+    transition:transform .3s cubic-bezier(.2,.7,.2,1);z-index:100;max-width:90vw;text-align:center;
+  }
+  .toast.show{transform:translateX(-50%) translateY(0);}
+  .toast.err{background:var(--mismatch);}
+
+  .progress{
+    display:none;height:4px;background:var(--line);border-radius:3px;overflow:hidden;margin:14px 0;
+  }
+  .progress.show{display:block;}
+  .progress .bar{height:100%;background:var(--accent);width:0;transition:width .25s;}
+
+  footer{
+    margin-top:46px;padding-top:20px;border-top:1px solid var(--line);
+    font-size:.76rem;color:var(--faint);display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;
+  }
+  footer b{color:var(--muted);font-weight:600;}
+  footer a{color:var(--faint);text-decoration:none;}
+  footer a:hover{color:var(--muted);}
+  footer .adsbygoogle{flex-basis:100%;margin-bottom:18px;}
+
+  @media(max-width:860px){
+    .editor-shell{grid-template-columns:1fr;}
+    .inspector{position:static;}
+  }
+  @media(max-width:640px){
+    .wrap{padding:28px 16px 60px;}
+    .nav-links{display:none;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <a class="brand" href="/">
+      <span class="mark"></span>
+      <h1>ReconFiles</h1>
+      <span class="sub">PDF Toolkit</span>
+    </a>
+    <nav class="nav-links">
+      <a href="/" class="nav-link">CSV Reconciliation</a>
+      <a href="/blog/" class="nav-link">Blog</a>
+      <a href="/how-to-use.html" class="nav-link">How to use</a>
+      <a href="/about.html" class="nav-link">About</a>
+    </nav>
+  </header>
+
+  <div class="intro">
+    <h2>PDF Toolkit</h2>
+    <p>Merge multiple PDFs into one, or add and replace text on any page — all in your browser. Your files are never uploaded anywhere.</p>
+  </div>
+
+  <div class="mode-tabs">
+    <button class="mode-tab active" data-mode="merge"><span class="ico">⊕</span> Merge PDFs</button>
+    <button class="mode-tab" data-mode="edit"><span class="ico">✎</span> Edit text</button>
+  </div>
+
+  <!-- MERGE PANEL -->
+  <div class="panel active" id="panel-merge">
+    <div class="drop" id="mergeDrop">
+      <span class="ico">⊕</span>
+      <span class="hint"><b>Click to browse</b> or drop PDF files here</span>
+      <span class="sub">Add two or more PDFs — drag to reorder before merging</span>
+      <input type="file" accept="application/pdf" multiple hidden id="mergeInput">
+    </div>
+    <div class="file-list" id="mergeList"></div>
+    <div class="progress" id="mergeProgress"><div class="bar" id="mergeBar"></div></div>
+    <div class="actions">
+      <button class="btn btn-primary" id="mergeBtn" disabled>↓ Merge &amp; download</button>
+      <button class="btn btn-ghost" id="mergeClear" disabled>Clear all</button>
+    </div>
+  </div>
+
+  <!-- EDIT PANEL -->
+  <div class="panel" id="panel-edit">
+    <div class="callout">
+      <span class="ci">ℹ</span>
+      <span>This tool adds <b>new text on top</b> of your PDF. To replace existing text, place a cover box (auto-coloured to match the background) over the old text, then type the replacement on top. It can't re-flow or directly edit text embedded in the original file — for heavily designed documents, editing the source and re-exporting gives the cleanest result. Note that covered text is hidden visually but <b>remains in the file's text layer underneath</b>, so don't rely on this to redact sensitive information.</span>
+    </div>
+
+    <div id="editEmpty" class="drop" style="margin-bottom:0;">
+      <span class="ico">✎</span>
+      <span class="hint"><b>Click to browse</b> or drop a PDF to edit</span>
+      <span class="sub">One PDF at a time — pages render below for editing</span>
+      <input type="file" accept="application/pdf" hidden id="editInput">
+    </div>
+
+    <div class="editor-shell" id="editorShell" style="display:none;">
+      <div class="editor-stage" id="editorStage"></div>
+
+      <div class="inspector" id="inspector">
+        <div class="picking-banner" id="pickingBanner"><span>🎯</span> Click anywhere on the PDF to copy that colour</div>
+
+        <h3>Tool</h3>
+        <div class="tool-toggle">
+          <button class="active" data-tool="text" id="toolText"><span class="ti">T</span>Add text</button>
+          <button data-tool="cover" id="toolCover"><span class="ti">▭</span>Cover &amp; replace</button>
+        </div>
+        <p class="insp-note" id="toolNote">Click on the page to drop a text box, then type. Drag to move, use the corner handle to resize.</p>
+
+        <div class="insp-divider"></div>
+
+        <div id="selProps" style="display:none;">
+          <div class="detected" id="detectedInfo">
+            <span class="det-empty">Click near existing text to detect its font &amp; size.</span>
+          </div>
+
+          <h3>Selected box</h3>
+          <div class="insp-field">
+            <label>Font</label>
+            <select id="fontSelect">
+              <option value="Helvetica">Helvetica (≈ Arial, Calibri)</option>
+              <option value="HelveticaBold">Helvetica Bold</option>
+              <option value="TimesRoman">Times Roman (≈ serif)</option>
+              <option value="TimesRomanBold">Times Roman Bold</option>
+              <option value="Courier">Courier (monospace)</option>
+              <option value="CourierBold">Courier Bold</option>
+            </select>
+            <div class="desc" id="fontDetectNote"></div>
+          </div>
+          <div class="row2">
+            <div class="insp-field">
+              <label>Size (pt)</label>
+              <input type="number" id="fontSize" value="12" min="4" max="200" step="0.5">
+            </div>
+            <div class="insp-field">
+              <label>Text colour</label>
+              <div class="color-row"><input type="color" id="textColor" value="#000000"></div>
+            </div>
+          </div>
+
+          <div class="insp-divider"></div>
+
+          <h3>Cover box (replace mode)</h3>
+          <div class="insp-field">
+            <label>Background fill</label>
+            <div class="color-row">
+              <input type="color" id="coverColor" value="#ffffff">
+              <button class="btn btn-ghost btn-sm" id="eyedropBtn" title="Pick colour from PDF">🎯 Pick</button>
+            </div>
+            <div class="desc">Auto-sampled from beside the box. Use 🎯 Pick to copy any colour from the PDF, or set it manually.</div>
+          </div>
+          <div class="insp-field">
+            <label class="color-row" style="font-weight:600;font-size:.78rem;cursor:pointer;">
+              <input type="checkbox" id="coverEnabled" style="width:16px;height:16px;accent-color:var(--accent);">
+              Draw background fill behind text
+            </label>
+            <div class="desc">On for replacing text, off for adding notes over blank space.</div>
+          </div>
+        </div>
+        <div id="noSelMsg" class="insp-note">No box selected. Pick a tool above and click on the page to add one.</div>
+
+        <div class="insp-divider"></div>
+        <div class="actions" style="margin-bottom:0;">
+          <button class="btn btn-primary btn-sm" id="editExportBtn" style="width:100%;justify-content:center;">↓ Download edited PDF</button>
+        </div>
+        <button class="btn btn-ghost btn-sm" id="editReset" style="width:100%;justify-content:center;margin-top:8px;">Load a different PDF</button>
+      </div>
+    </div>
+    <div class="progress" id="editProgress"><div class="bar" id="editBar"></div></div>
+  </div>
+
+  <footer>
+    <ins class="adsbygoogle" style="display:block;width:100%;"
+         data-ad-client="ca-pub-5912433991207295" data-ad-slot="7756971595"
+         data-ad-format="auto" data-full-width-responsive="true"></ins>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    <span>© 2025 <b>ReconFiles</b> · <a href="https://reconfiles.co.uk">reconfiles.co.uk</a> · Free PDF toolkit</span>
+    <span>🔒 All processing happens in your browser — your files are never uploaded anywhere.</span>
+  </footer>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
+<script>
+"use strict";
+
+/* ============ Mode switching ============ */
+document.querySelectorAll(".mode-tab").forEach(tab=>{
+  tab.addEventListener("click",()=>{
+    document.querySelectorAll(".mode-tab").forEach(t=>t.classList.remove("active"));
+    tab.classList.add("active");
+    const mode = tab.dataset.mode;
+    document.getElementById("panel-merge").classList.toggle("active", mode==="merge");
+    document.getElementById("panel-edit").classList.toggle("active", mode==="edit");
+  });
+});
+
+/* ============ Toast ============ */
+let toastTimer=null;
+function toast(msg, isErr){
+  let t=document.querySelector(".toast");
+  if(!t){ t=document.createElement("div"); t.className="toast"; document.body.appendChild(t); }
+  t.textContent=msg; t.classList.toggle("err",!!isErr);
+  t.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>t.classList.remove("show"),3200);
+}
+
+function fmtSize(bytes){
+  if(bytes<1024) return bytes+" B";
+  if(bytes<1048576) return (bytes/1024).toFixed(0)+" KB";
+  return (bytes/1048576).toFixed(1)+" MB";
+}
+
+/* ============================================================
+   MERGE
+   ============================================================ */
+let mergeFiles = [];  // { file, name, size }
+
+const mergeDrop = document.getElementById("mergeDrop");
+const mergeInput = document.getElementById("mergeInput");
+const mergeListEl = document.getElementById("mergeList");
+
+mergeDrop.addEventListener("click",e=>{ if(e.target.tagName!=="INPUT") mergeInput.click(); });
+mergeInput.addEventListener("change",()=>{ addMergeFiles(mergeInput.files); mergeInput.value=""; });
+["dragenter","dragover"].forEach(ev=>mergeDrop.addEventListener(ev,e=>{e.preventDefault();mergeDrop.classList.add("drag");}));
+["dragleave","drop"].forEach(ev=>mergeDrop.addEventListener(ev,e=>{e.preventDefault();mergeDrop.classList.remove("drag");}));
+mergeDrop.addEventListener("drop",e=>{ if(e.dataTransfer.files) addMergeFiles(e.dataTransfer.files); });
+
+function addMergeFiles(fileList){
+  let added=0;
+  for(const f of fileList){
+    if(f.type!=="application/pdf" && !/\.pdf$/i.test(f.name)){ continue; }
+    mergeFiles.push({ file:f, name:f.name, size:f.size });
+    added++;
+  }
+  if(added===0){ toast("Please choose PDF files only.", true); }
+  renderMergeList();
+}
+
+function renderMergeList(){
+  mergeListEl.innerHTML = mergeFiles.map((f,i)=>`
+    <div class="file-item" draggable="true" data-idx="${i}">
+      <span class="grip">⋮⋮</span>
+      <span class="idx">${i+1}</span>
+      <span class="fi-name">${escapeHtml(f.name)}</span>
+      <span class="fi-meta">${fmtSize(f.size)}</span>
+      <button class="fi-remove" data-rem="${i}" title="Remove">✕</button>
+    </div>`).join("");
+  document.getElementById("mergeBtn").disabled = mergeFiles.length<2;
+  document.getElementById("mergeClear").disabled = mergeFiles.length===0;
+  bindMergeListEvents();
+}
+
+function bindMergeListEvents(){
+  mergeListEl.querySelectorAll(".fi-remove").forEach(b=>
+    b.addEventListener("click",()=>{ mergeFiles.splice(+b.dataset.rem,1); renderMergeList(); }));
+  let dragIdx=null;
+  mergeListEl.querySelectorAll(".file-item").forEach(item=>{
+    item.addEventListener("dragstart",()=>{ dragIdx=+item.dataset.idx; item.classList.add("dragging"); });
+    item.addEventListener("dragend",()=>item.classList.remove("dragging"));
+    item.addEventListener("dragover",e=>e.preventDefault());
+    item.addEventListener("drop",e=>{
+      e.preventDefault();
+      const dropIdx=+item.dataset.idx;
+      if(dragIdx===null||dragIdx===dropIdx) return;
+      const [moved]=mergeFiles.splice(dragIdx,1);
+      mergeFiles.splice(dropIdx,0,moved);
+      dragIdx=null; renderMergeList();
+    });
+  });
+}
+
+document.getElementById("mergeClear").addEventListener("click",()=>{ mergeFiles=[]; renderMergeList(); });
+
+document.getElementById("mergeBtn").addEventListener("click",async()=>{
+  if(mergeFiles.length<2){ toast("Add at least two PDFs to merge.", true); return; }
+  const btn=document.getElementById("mergeBtn");
+  const prog=document.getElementById("mergeProgress"), bar=document.getElementById("mergeBar");
+  btn.disabled=true; prog.classList.add("show"); bar.style.width="0";
+  try{
+    const { PDFDocument } = PDFLib;
+    const out = await PDFDocument.create();
+    for(let i=0;i<mergeFiles.length;i++){
+      const buf = await mergeFiles[i].file.arrayBuffer();
+      const src = await PDFDocument.load(buf, { ignoreEncryption:true });
+      const pages = await out.copyPages(src, src.getPageIndices());
+      pages.forEach(p=>out.addPage(p));
+      bar.style.width = Math.round(((i+1)/mergeFiles.length)*100)+"%";
+    }
+    const bytes = await out.save();
+    downloadBlob(new Blob([bytes],{type:"application/pdf"}), "merged.pdf");
+    toast("Merged "+mergeFiles.length+" PDFs ✓");
+  }catch(err){
+    console.error(err);
+    toast("Couldn't merge — one file may be encrypted or corrupt.", true);
+  }finally{
+    btn.disabled=false;
+    setTimeout(()=>prog.classList.remove("show"),600);
+  }
+});
+
+/* ============================================================
+   EDIT
+   ============================================================ */
+const editInput = document.getElementById("editInput");
+const editEmpty = document.getElementById("editEmpty");
+const editorShell = document.getElementById("editorShell");
+const editorStage = document.getElementById("editorStage");
+
+let pdfDocProxy = null;       // pdf.js document
+let editArrayBuffer = null;   // original bytes for pdf-lib
+let editFileName = "document.pdf";
+let renderScale = 1.5;        // canvas px per PDF pt
+let pageInfos = [];           // { pageNum, viewport, canvas, overlay, textItems }
+let boxes = [];               // edit boxes
+let selectedBox = null;
+let currentTool = "text";
+let eyedropActive = false;
+
+if(typeof pdfjsLib!=="undefined"){
+  pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js";
+}
+
+editEmpty.addEventListener("click",e=>{ if(e.target.tagName!=="INPUT") editInput.click(); });
+editInput.addEventListener("change",()=>{ if(editInput.files[0]) loadEditPdf(editInput.files[0]); editInput.value=""; });
+["dragenter","dragover"].forEach(ev=>editEmpty.addEventListener(ev,e=>{e.preventDefault();editEmpty.classList.add("drag");}));
+["dragleave","drop"].forEach(ev=>editEmpty.addEventListener(ev,e=>{e.preventDefault();editEmpty.classList.remove("drag");}));
+editEmpty.addEventListener("drop",e=>{ const f=e.dataTransfer.files[0]; if(f) loadEditPdf(f); });
+
+async function loadEditPdf(file){
+  if(file.type!=="application/pdf" && !/\.pdf$/i.test(file.name)){ toast("Please choose a PDF file.", true); return; }
+  editFileName = file.name;
+  const prog=document.getElementById("editProgress"), bar=document.getElementById("editBar");
+  prog.classList.add("show"); bar.style.width="10%";
+  try{
+    editArrayBuffer = await file.arrayBuffer();
+    // pdf.js needs its own copy (it transfers/detaches the buffer)
+    const pdfjsBuf = editArrayBuffer.slice(0);
+    pdfDocProxy = await pdfjsLib.getDocument({ data: pdfjsBuf }).promise;
+    boxes = []; selectedBox = null; pageInfos = [];
+    editorStage.innerHTML = "";
+    const total = pdfDocProxy.numPages;
+    for(let p=1;p<=total;p++){
+      await renderEditPage(p);
+      bar.style.width = (10 + Math.round((p/total)*85))+"%";
+    }
+    editEmpty.style.display="none";
+    editorShell.style.display="grid";
+    updateInspector();
+    toast("Loaded "+total+" page"+(total===1?"":"s")+" — click a page to add text");
+  }catch(err){
+    console.error(err);
+    toast("Couldn't open this PDF — it may be encrypted.", true);
+  }finally{
+    setTimeout(()=>prog.classList.remove("show"),600);
+  }
+}
+
+async function renderEditPage(pageNum){
+  const page = await pdfDocProxy.getPage(pageNum);
+  const viewport = page.getViewport({ scale: renderScale });
+
+  const wrap = document.createElement("div");
+  wrap.className = "page-canvas-wrap";
+  wrap.style.width = viewport.width+"px";
+  wrap.style.height = viewport.height+"px";
+
+  const canvas = document.createElement("canvas");
+  canvas.width = viewport.width;
+  canvas.height = viewport.height;
+  const ctx = canvas.getContext("2d", { willReadFrequently:true });
+  wrap.appendChild(canvas);
+
+  const overlay = document.createElement("div");
+  overlay.className = "page-overlay";
+  overlay.dataset.page = pageNum;
+  wrap.appendChild(overlay);
+
+  const label = document.createElement("div");
+  label.className = "page-label";
+  label.textContent = "Page "+pageNum+" of "+pdfDocProxy.numPages;
+
+  editorStage.appendChild(label);
+  editorStage.appendChild(wrap);
+
+  await page.render({ canvasContext: ctx, viewport }).promise;
+
+  // Grab text items for font/size detection
+  let textItems = [];
+  try{
+    const tc = await page.getTextContent();
+    textItems = tc.items.map(it=>({
+      str: it.str,
+      x: it.transform[4],
+      y: it.transform[5],
+      fontName: it.fontName,
+      height: Math.hypot(it.transform[2], it.transform[3]) || it.height || 0,
+      width: it.width || 0,
+      styles: tc.styles
+    }));
+    // store font style map (font name -> {fontFamily})
+    pageInfos._styles = tc.styles;
+  }catch(e){ /* scanned PDF — no text layer */ }
+
+  const info = { pageNum, viewport, canvas, ctx, overlay, textItems, page };
+  pageInfos.push(info);
+
+  overlay.addEventListener("click", e=>onOverlayClick(e, info));
+}
+
+/* ----- Tool toggles ----- */
+document.querySelectorAll(".tool-toggle button").forEach(b=>{
+  b.addEventListener("click",()=>{
+    document.querySelectorAll(".tool-toggle button").forEach(x=>x.classList.remove("active"));
+    b.classList.add("active");
+    currentTool = b.dataset.tool;
+    document.getElementById("toolNote").textContent = currentTool==="text"
+      ? "Click on the page to drop a text box, then type. Drag to move, use the corner handle to resize."
+      : "Click on existing text to cover it with a matching background, then type the replacement on top.";
+  });
+});
+
+/* ----- Click on page to add a box ----- */
+function onOverlayClick(e, info){
+  if(eyedropActive){ doEyedrop(e, info); return; }
+  if(e.target.closest(".edit-box")) return; // clicked an existing box
+
+  const rect = info.overlay.getBoundingClientRect();
+  const px = e.clientX - rect.left;
+  const py = e.clientY - rect.top;
+
+  // Detect nearby text for font/size
+  const detected = detectTextAt(info, px, py);
+
+  const box = makeBox(info, px, py, detected);
+  boxes.push(box);
+  selectBox(box);
+
+  // Cover mode: enable background fill + auto-sample colour
+  if(currentTool==="cover"){
+    document.getElementById("coverEnabled").checked = true;
+    box.cover = true;
+    const sampled = sampleBackground(info, px, py, box.el.offsetWidth, box.el.offsetHeight);
+    if(sampled){ box.coverColor = sampled; document.getElementById("coverColor").value = sampled; }
+    applyBoxStyle(box);
+  }
+  setTimeout(()=>{ const ta=box.el.querySelector("textarea"); if(ta) ta.focus(); },10);
+}
+
+/* Detect the text item nearest the click (in PDF coordinates) */
+function detectTextAt(info, px, py){
+  if(!info.textItems || !info.textItems.length) return null;
+  // Convert canvas px → PDF pt. viewport maps pt→px at renderScale, y flipped.
+  const pdfX = px / renderScale;
+  const pdfY = (info.viewport.height - py) / renderScale;
+  let best=null, bestDist=Infinity;
+  for(const it of info.textItems){
+    if(!it.str || !it.str.trim()) continue;
+    const cx = it.x + (it.width/2);
+    const cy = it.y + (it.height/2);
+    const d = Math.hypot(cx-pdfX, cy-pdfY);
+    if(d<bestDist){ bestDist=d; best=it; }
+  }
+  // Only treat as a match if reasonably close (within ~40pt)
+  if(best && bestDist < 40){
+    let family = "";
+    const styles = info.textItems.styles || pageInfos._styles;
+    if(styles && best.fontName && styles[best.fontName]){
+      family = styles[best.fontName].fontFamily || "";
+    }
+    return { size: Math.round(best.height*10)/10 || 12, family, raw: best.fontName||"" };
+  }
+  return null;
+}
+
+/* Map a detected font family string to one of our standard fonts */
+function mapFont(family, raw){
+  const s = ((family||"")+" "+(raw||"")).toLowerCase();
+  const bold = /bold|black|heavy|semibold|-bd|,bold/.test(s);
+  if(/times|serif|georgia|garamond|roman|minion/.test(s)) return bold?"TimesRomanBold":"TimesRoman";
+  if(/courier|mono|consol/.test(s)) return bold?"CourierBold":"Courier";
+  return bold?"HelveticaBold":"Helvetica"; // default sans (Arial/Calibri/Helvetica)
+}
+
+function makeBox(info, px, py, detected){
+  const el = document.createElement("div");
+  el.className = "edit-box";
+  const size = detected ? detected.size : 12;
+  const pxHeight = size * renderScale * 1.25;
+  el.style.left = px+"px";
+  el.style.top = (py - pxHeight/2)+"px";
+  el.style.width = "160px";
+  el.style.height = pxHeight+"px";
+
+  const ta = document.createElement("textarea");
+  ta.spellcheck=false;
+  ta.style.fontSize = (size*renderScale)+"px";
+  el.appendChild(ta);
+
+  const del = document.createElement("button");
+  del.className="eb-del"; del.innerHTML="✕"; el.appendChild(del);
+  const rs = document.createElement("div"); rs.className="eb-resize"; el.appendChild(rs);
+
+  info.overlay.appendChild(el);
+
+  const fontKey = detected ? mapFont(detected.family, detected.raw) : "Helvetica";
+
+  const box = {
+    el, ta, info,
+    font: fontKey,
+    size: size,
+    color: "#000000",
+    cover: false,
+    coverColor: "#ffffff",
+    detected: detected
+  };
+
+  ta.style.fontFamily = cssFontFor(fontKey);
+
+  // Interactions
+  el.addEventListener("mousedown",ev=>{
+    if(ev.target===rs || ev.target===del) return;
+    selectBox(box);
+  });
+  ta.addEventListener("focus",()=>selectBox(box));
+  del.addEventListener("click",()=>removeBox(box));
+  enableDrag(box, rs);
+
+  return box;
+}
+
+function cssFontFor(key){
+  if(key.startsWith("Times")) return "Georgia, 'Times New Roman', serif";
+  if(key.startsWith("Courier")) return "'Courier New', monospace";
+  return "Helvetica, Arial, sans-serif";
+}
+
+function enableDrag(box, resizeHandle){
+  const el = box.el;
+  let mode=null, sx,sy,ox,oy,ow,oh;
+  el.addEventListener("mousedown",e=>{
+    if(e.target===box.ta) return; // let textarea handle text
+    if(e.target===resizeHandle){ mode="resize"; } else { mode="move"; }
+    sx=e.clientX; sy=e.clientY;
+    ox=el.offsetLeft; oy=el.offsetTop; ow=el.offsetWidth; oh=el.offsetHeight;
+    e.preventDefault();
+    document.addEventListener("mousemove",onMove);
+    document.addEventListener("mouseup",onUp);
+  });
+  function onMove(e){
+    const dx=e.clientX-sx, dy=e.clientY-sy;
+    if(mode==="move"){ el.style.left=(ox+dx)+"px"; el.style.top=(oy+dy)+"px"; }
+    else if(mode==="resize"){
+      el.style.width=Math.max(30,ow+dx)+"px";
+      el.style.height=Math.max(16,oh+dy)+"px";
+    }
+  }
+  function onUp(){ mode=null; document.removeEventListener("mousemove",onMove); document.removeEventListener("mouseup",onUp); }
+}
+
+function selectBox(box){
+  selectedBox = box;
+  document.querySelectorAll(".edit-box").forEach(b=>b.classList.remove("selected"));
+  box.el.classList.add("selected");
+  // sync inspector
+  document.getElementById("selProps").style.display="block";
+  document.getElementById("noSelMsg").style.display="none";
+  document.getElementById("fontSelect").value = box.font;
+  document.getElementById("fontSize").value = box.size;
+  document.getElementById("textColor").value = box.color;
+  document.getElementById("coverColor").value = box.coverColor;
+  document.getElementById("coverEnabled").checked = box.cover;
+  // detected info
+  const di = document.getElementById("detectedInfo");
+  const fn = document.getElementById("fontDetectNote");
+  if(box.detected){
+    di.innerHTML = `Detected near click: <b>${escapeHtml(box.detected.raw||box.detected.family||"unknown")}</b> at <b>${box.detected.size}pt</b>. Closest match selected below — change if needed.`;
+    fn.textContent = "Auto-matched from the original. PDFs can't always be matched exactly.";
+  } else {
+    di.innerHTML = `<span class="det-empty">No nearby text detected — pick a font manually.</span>`;
+    fn.textContent = "";
+  }
+}
+
+function removeBox(box){
+  box.el.remove();
+  boxes = boxes.filter(b=>b!==box);
+  if(selectedBox===box){
+    selectedBox=null;
+    document.getElementById("selProps").style.display="none";
+    document.getElementById("noSelMsg").style.display="block";
+  }
+}
+
+function applyBoxStyle(box){
+  box.ta.style.fontSize = (box.size*renderScale)+"px";
+  box.ta.style.color = box.color;
+  box.ta.style.fontFamily = cssFontFor(box.font);
+  box.el.style.background = box.cover ? box.coverColor : "rgba(255,255,255,0)";
+}
+
+/* ----- Inspector field bindings ----- */
+document.getElementById("fontSelect").addEventListener("change",e=>{
+  if(!selectedBox) return; selectedBox.font=e.target.value; applyBoxStyle(selectedBox);
+});
+document.getElementById("fontSize").addEventListener("input",e=>{
+  if(!selectedBox) return; selectedBox.size=parseFloat(e.target.value)||12; applyBoxStyle(selectedBox);
+});
+document.getElementById("textColor").addEventListener("input",e=>{
+  if(!selectedBox) return; selectedBox.color=e.target.value; applyBoxStyle(selectedBox);
+});
+document.getElementById("coverColor").addEventListener("input",e=>{
+  if(!selectedBox) return; selectedBox.coverColor=e.target.value;
+  if(selectedBox.cover) applyBoxStyle(selectedBox);
+});
+document.getElementById("coverEnabled").addEventListener("change",e=>{
+  if(!selectedBox) return; selectedBox.cover=e.target.checked; applyBoxStyle(selectedBox);
+});
+
+/* ----- Eyedropper ----- */
+document.getElementById("eyedropBtn").addEventListener("click",()=>{
+  eyedropActive = !eyedropActive;
+  document.getElementById("pickingBanner").classList.toggle("show", eyedropActive);
+  editorStage.classList.toggle("eyedropper-active", eyedropActive);
+});
+function doEyedrop(e, info){
+  const rect = info.overlay.getBoundingClientRect();
+  const px = Math.round(e.clientX - rect.left);
+  const py = Math.round(e.clientY - rect.top);
+  try{
+    const d = info.ctx.getImageData(px, py, 1, 1).data;
+    const hex = rgbToHex(d[0],d[1],d[2]);
+    if(selectedBox){
+      selectedBox.coverColor = hex;
+      selectedBox.cover = true;
+      document.getElementById("coverColor").value = hex;
+      document.getElementById("coverEnabled").checked = true;
+      applyBoxStyle(selectedBox);
+    } else {
+      document.getElementById("coverColor").value = hex;
+    }
+    toast("Picked colour "+hex);
+  }catch(err){ toast("Couldn't read that pixel.", true); }
+  eyedropActive=false;
+  document.getElementById("pickingBanner").classList.remove("show");
+  editorStage.classList.remove("eyedropper-active");
+}
+
+/* Auto-sample background just outside the box (to the right of click point) */
+function sampleBackground(info, px, py, w, h){
+  try{
+    // sample a few points around the area and take the median-ish (most common) colour
+    const pts = [[px+ (w||40) +6, py],[px-6,py],[px, py-((h||20)/2)-6],[px,py+((h||20)/2)+6]];
+    const cols=[];
+    for(const [sx,sy] of pts){
+      const x=Math.max(0,Math.min(info.canvas.width-1,Math.round(sx)));
+      const y=Math.max(0,Math.min(info.canvas.height-1,Math.round(sy)));
+      const d=info.ctx.getImageData(x,y,1,1).data;
+      cols.push([d[0],d[1],d[2]]);
+    }
+    // pick the lightest sample (most likely the page background, not the text)
+    cols.sort((a,b)=>(b[0]+b[1]+b[2])-(a[0]+a[1]+a[2]));
+    const c=cols[0];
+    return rgbToHex(c[0],c[1],c[2]);
+  }catch(e){ return null; }
+}
+
+/* ----- Reset ----- */
+document.getElementById("editReset").addEventListener("click",()=>{
+  pdfDocProxy=null; editArrayBuffer=null; boxes=[]; selectedBox=null; pageInfos=[];
+  editorStage.innerHTML="";
+  editorShell.style.display="none";
+  editEmpty.style.display="flex";
+  document.getElementById("selProps").style.display="none";
+  document.getElementById("noSelMsg").style.display="block";
+});
+
+/* ----- Export edited PDF ----- */
+document.getElementById("editExportBtn").addEventListener("click",async()=>{
+  if(!editArrayBuffer){ toast("Load a PDF first.", true); return; }
+  const withText = boxes.filter(b=>b.ta.value.trim()!=="" || b.cover);
+  if(!withText.length){ toast("Add some text or a cover box first.", true); return; }
+
+  const prog=document.getElementById("editProgress"), bar=document.getElementById("editBar");
+  prog.classList.add("show"); bar.style.width="20%";
+  try{
+    const { PDFDocument, rgb, StandardFonts } = PDFLib;
+    const doc = await PDFDocument.load(editArrayBuffer.slice(0), { ignoreEncryption:true });
+    const pages = doc.getPages();
+
+    // embed fonts on demand
+    const fontCache = {};
+    async function getFont(key){
+      if(fontCache[key]) return fontCache[key];
+      const map = {
+        Helvetica:StandardFonts.Helvetica, HelveticaBold:StandardFonts.HelveticaBold,
+        TimesRoman:StandardFonts.TimesRoman, TimesRomanBold:StandardFonts.TimesRomanBold,
+        Courier:StandardFonts.Courier, CourierBold:StandardFonts.CourierBold
+      };
+      const f = await doc.embedFont(map[key]||StandardFonts.Helvetica);
+      fontCache[key]=f; return f;
+    }
+
+    for(const box of withText){
+      const info = box.info;
+      const pageIdx = info.pageNum - 1;
+      const page = pages[pageIdx];
+      const { height: pageH } = page.getSize();
+
+      // box geometry in canvas px → PDF pt
+      const leftPx = box.el.offsetLeft;
+      const topPx  = box.el.offsetTop;
+      const wPx    = box.el.offsetWidth;
+      const hPx    = box.el.offsetHeight;
+
+      const xPt = leftPx / renderScale;
+      const yTopPt = topPx / renderScale;
+      const wPt = wPx / renderScale;
+      const hPt = hPx / renderScale;
+      const yPt = pageH - yTopPt - hPt; // pdf-lib origin is bottom-left
+
+      // 1. cover background
+      if(box.cover){
+        const c = hexToRgb(box.coverColor);
+        page.drawRectangle({
+          x:xPt, y:yPt, width:wPt, height:hPt,
+          color: rgb(c.r/255, c.g/255, c.b/255)
+        });
+      }
+
+      // 2. text
+      const txt = box.ta.value;
+      if(txt.trim()!==""){
+        const font = await getFont(box.font);
+        const tc = hexToRgb(box.color);
+        const size = box.size;
+        // draw line by line, top-aligned within the box
+        const lines = txt.split("\n");
+        let cursorY = pageH - yTopPt - size; // baseline of first line near top
+        for(const line of lines){
+          page.drawText(line, {
+            x: xPt+1, y: cursorY,
+            size, font,
+            color: rgb(tc.r/255, tc.g/255, tc.b/255),
+            maxWidth: wPt,
+          });
+          cursorY -= size*1.2;
+        }
+      }
+      bar.style.width="70%";
+    }
+
+    const bytes = await doc.save();
+    const base = editFileName.replace(/\.pdf$/i,"");
+    downloadBlob(new Blob([bytes],{type:"application/pdf"}), base+"_edited.pdf");
+    bar.style.width="100%";
+    toast("Exported edited PDF ✓");
+  }catch(err){
+    console.error(err);
+    toast("Export failed — "+(err.message||"unknown error"), true);
+  }finally{
+    setTimeout(()=>prog.classList.remove("show"),700);
+  }
+});
+
+function updateInspector(){
+  document.getElementById("selProps").style.display = selectedBox?"block":"none";
+  document.getElementById("noSelMsg").style.display = selectedBox?"none":"block";
+}
+
+/* Delete key removes selected box (when not typing) */
+document.addEventListener("keydown",e=>{
+  if((e.key==="Delete") && selectedBox && document.activeElement.tagName!=="TEXTAREA"){
+    removeBox(selectedBox);
+  }
+});
+
+/* ============ shared helpers ============ */
+function downloadBlob(blob, name){
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a"); a.href=url; a.download=name;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),4000);
+}
+function escapeHtml(s){ return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
+function rgbToHex(r,g,b){ return "#"+[r,g,b].map(x=>x.toString(16).padStart(2,"0")).join(""); }
+function hexToRgb(hex){
+  const m=/^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  return m?{r:parseInt(m[1],16),g:parseInt(m[2],16),b:parseInt(m[3],16)}:{r:255,g:255,b:255};
+}
+</script>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5912433991207295" crossorigin="anonymous"></script>
+</body>
+</html>
