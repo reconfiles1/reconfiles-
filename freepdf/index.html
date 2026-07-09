@@ -4,24 +4,28 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>PDF & Image Merger — Combine PDFs and Images Free Online</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700&family=Hanken+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   :root {
-    --bg: #F7F6F3;
-    --surface: #FFFFFF;
-    --border: rgba(0,0,0,0.10);
-    --border-strong: rgba(0,0,0,0.18);
-    --text-primary: #1A1A18;
-    --text-secondary: #5F5E5A;
-    --text-hint: #9C9B96;
-    --accent: #2C5FF6;
-    --accent-light: #EDF1FE;
-    --accent-text: #1741C4;
-    --danger: #C0392B;
+    --bg: #F1EEE4;
+    --surface: #FDFCF8;
+    --border: rgba(0,0,0,0.09);
+    --border-strong: rgba(0,0,0,0.16);
+    --text-primary: #1C1C1A;
+    --text-secondary: #5A5A54;
+    --text-hint: #9A9A90;
+    --accent: #15573B;
+    --accent-hover: #0E3D2A;
+    --accent-light: #E8F2EC;
+    --accent-text: #0E3D2A;
+    --danger: #B83232;
     --danger-light: #FCEBEB;
-    --success: #1D6F42;
-    --success-light: #EAF3DE;
+    --success: #15573B;
+    --success-light: #E8F2EC;
     --radius: 10px;
     --radius-sm: 6px;
     --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
@@ -29,8 +33,10 @@
   }
 
   body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-family: 'Hanken Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     background: var(--bg);
+    background-image: radial-gradient(circle, rgba(0,0,0,0.08) 1px, transparent 1px);
+    background-size: 24px 24px;
     color: var(--text-primary);
     min-height: 100vh;
     padding: 0;
@@ -50,16 +56,21 @@
     position: sticky;
     top: 0;
     z-index: 10;
+    box-shadow: 0 1px 0 rgba(0,0,0,0.04);
   }
   .logo-mark {
     width: 28px; height: 28px;
     background: var(--accent);
     border-radius: 7px;
     display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
   }
   .logo-mark svg { display: block; }
-  .logo-name { font-size: 15px; font-weight: 600; letter-spacing: -0.01em; color: var(--text-primary); }
-  .logo-tag { font-size: 12px; color: var(--text-hint); }
+  .logo-name {
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-size: 15px; font-weight: 600; letter-spacing: -0.02em;
+    color: var(--text-primary);
+  }
   .header-nav { display: flex; align-items: center; gap: 6px; margin-left: auto; }
   .nav-tool-link {
     font-size: 12px; font-weight: 500;
@@ -69,9 +80,10 @@
     border: 0.5px solid var(--border);
     border-radius: var(--radius-sm);
     white-space: nowrap;
+    background: var(--surface);
     transition: background 0.12s, color 0.12s, border-color 0.12s;
   }
-  .nav-tool-link:hover { background: var(--accent-light); color: var(--accent-text); border-color: rgba(44,95,246,0.25); }
+  .nav-tool-link:hover { background: var(--accent-light); color: var(--accent-text); border-color: rgba(21,87,59,0.25); }
 
   /* ── Main layout ── */
   main {
@@ -83,6 +95,7 @@
   /* ── Hero ── */
   .hero { text-align: center; margin-bottom: 2.5rem; }
   .hero h1 {
+    font-family: 'Bricolage Grotesque', sans-serif;
     font-size: 2rem;
     font-weight: 700;
     letter-spacing: -0.03em;
@@ -149,13 +162,13 @@
   }
   .file-item:active { cursor: grabbing; }
   .file-item.dragging { opacity: 0.4; box-shadow: none; }
-  .file-item.drop-target { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-light); }
+  .file-item.drop-target { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(21,87,59,0.12); }
 
   .file-thumb {
     width: 36px; height: 44px;
     background: var(--accent-light);
     border-radius: 5px;
-    border: 0.5px solid rgba(44,95,246,0.18);
+    border: 0.5px solid rgba(21,87,59,0.18);
     display: flex; align-items: center; justify-content: center;
     flex-shrink: 0;
     position: relative;
@@ -226,7 +239,7 @@
   .add-more-btn input[type="file"] {
     position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%;
   }
-  .add-more-btn:hover { background: var(--accent-light); border-color: var(--accent); color: var(--accent-text); }
+  .add-more-btn:hover { background: var(--accent-light); border-color: var(--accent); color: var(--accent); }
 
   /* ── Options panel ── */
   .options-panel {
@@ -252,7 +265,7 @@
     outline: none;
     transition: border-color 0.15s;
   }
-  .filename-input:focus { border-color: var(--accent); background: var(--surface); }
+  .filename-input:focus { border-color: var(--accent); background: var(--surface); outline: none; }
   .filename-suffix { font-size: 13px; color: var(--text-hint); }
 
   /* ── Merge button ── */
@@ -270,7 +283,7 @@
     transition: background 0.15s, transform 0.1s;
     letter-spacing: -0.01em;
   }
-  .merge-btn:hover:not(:disabled) { background: #1741C4; }
+  .merge-btn:hover:not(:disabled) { background: var(--accent-hover); }
   .merge-btn:active:not(:disabled) { transform: scale(0.99); }
   .merge-btn:disabled { background: var(--text-hint); cursor: not-allowed; }
 
@@ -331,8 +344,8 @@
     vertical-align: middle; margin-left: 5px;
     text-transform: uppercase;
   }
-  .type-pdf  { background: #EDF1FE; color: #1741C4; }
-  .type-img  { background: #EAF3DE; color: #3B6D11; }
+  .type-pdf  { background: var(--accent-light); color: var(--accent); }
+  .type-img  { background: #E6EFD8; color: #3A5E1A; }
 
   /* ── Image thumbnail ── */
   .file-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 4px; }
@@ -351,9 +364,11 @@
   <a href="/" style="display:flex; align-items:center; gap:10px; text-decoration:none;">
     <div class="logo-mark">
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-        <rect x="3" y="1" width="7" height="9" rx="1.5" fill="white" opacity="0.9"/>
-        <rect x="6" y="6" width="7" height="9" rx="1.5" fill="white" opacity="0.6"/>
-        <line x1="8" y1="11" x2="12" y2="11" stroke="rgba(44,95,246,0.8)" stroke-width="1.5"/>
+        <rect x="2" y="2" width="8" height="10" rx="1.5" fill="white" opacity="0.95"/>
+        <rect x="6" y="5" width="8" height="10" rx="1.5" fill="white" opacity="0.55"/>
+        <line x1="4" y1="5.5" x2="8" y2="5.5" stroke="rgba(21,87,59,0.6)" stroke-width="1"/>
+        <line x1="4" y1="7.5" x2="8" y2="7.5" stroke="rgba(21,87,59,0.6)" stroke-width="1"/>
+        <line x1="4" y1="9.5" x2="7" y2="9.5" stroke="rgba(21,87,59,0.6)" stroke-width="1"/>
       </svg>
     </div>
     <span class="logo-name">ReconFiles</span>
@@ -375,10 +390,10 @@
   <div class="dropzone" id="dropzone">
     <input type="file" accept="application/pdf,image/jpeg,image/png,image/webp" multiple id="fileInput" />
     <svg class="dz-icon" width="40" height="40" viewBox="0 0 40 40" fill="none">
-      <rect x="4" y="4" width="18" height="24" rx="3" fill="#D3D1C7"/>
-      <rect x="14" y="12" width="18" height="24" rx="3" fill="#B4B2A9"/>
+      <rect x="4" y="4" width="18" height="24" rx="3" fill="#C5D9CB"/>
+      <rect x="14" y="12" width="18" height="24" rx="3" fill="#A8C4B0"/>
       <path d="M20 28l4-4 4 4M24 24v10" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
-      <rect x="6" y="6" width="10" height="8" rx="1.5" fill="#9C9B96" opacity="0.5"/>
+      <rect x="6" y="6" width="10" height="8" rx="1.5" fill="#8BAF95" opacity="0.5"/>
       <circle cx="8.5" cy="8.5" r="1.2" fill="white" opacity="0.7"/>
       <path d="M6 12l3-2.5 2 2 2-3 3 3.5" stroke="white" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.7"/>
     </svg>
@@ -435,6 +450,25 @@
     Your files never leave your device — all processing happens locally in your browser.
   </div>
 </main>
+
+<footer style="
+  border-top: 0.5px solid var(--border);
+  background: var(--surface);
+  padding: 1.5rem 2rem;
+  text-align: center;
+  font-size: 12px;
+  color: var(--text-hint);
+  margin-top: 2rem;
+">
+  <div style="max-width:780px; margin:0 auto; display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:8px 16px;">
+    <span>© 2025 ReconFiles — free finance tools, built for people who work with data.</span>
+    <span style="color: var(--border-strong);">·</span>
+    <a href="/" style="color:var(--text-hint); text-decoration:none;" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--text-hint)'">CSV Reconciliation</a>
+    <a href="freepdf/" style="color:var(--text-hint); text-decoration:none;" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--text-hint)'">PDF Toolkit</a>
+    <a href="how-to-use.html" style="color:var(--text-hint); text-decoration:none;" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--text-hint)'">How to use</a>
+    <a href="about.html" style="color:var(--text-hint); text-decoration:none;" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--text-hint)'">About</a>
+  </div>
+</footer>
 
 <div class="toast" id="toast"></div>
 
@@ -590,11 +624,11 @@ function renderList() {
     const thumbHtml = isImg
       ? `<img src="${f.previewUrl}" alt="" />`
       : `<svg width="18" height="20" viewBox="0 0 18 20" fill="none">
-          <rect x="1" y="1" width="12" height="16" rx="2" fill="#EDF1FE" stroke="#2C5FF6" stroke-width="0.8" opacity="0.7"/>
-          <path d="M7 1v4h6" fill="none" stroke="#2C5FF6" stroke-width="0.8" opacity="0.5"/>
-          <line x1="3.5" y1="9" x2="10.5" y2="9" stroke="#2C5FF6" stroke-width="0.8" opacity="0.5"/>
-          <line x1="3.5" y1="11.5" x2="10.5" y2="11.5" stroke="#2C5FF6" stroke-width="0.8" opacity="0.5"/>
-          <line x1="3.5" y1="14" x2="8" y2="14" stroke="#2C5FF6" stroke-width="0.8" opacity="0.5"/>
+          <rect x="1" y="1" width="12" height="16" rx="2" fill="#E8F2EC" stroke="#15573B" stroke-width="0.8" opacity="0.7"/>
+          <path d="M7 1v4h6" fill="none" stroke="#15573B" stroke-width="0.8" opacity="0.5"/>
+          <line x1="3.5" y1="9" x2="10.5" y2="9" stroke="#15573B" stroke-width="0.8" opacity="0.5"/>
+          <line x1="3.5" y1="11.5" x2="10.5" y2="11.5" stroke="#15573B" stroke-width="0.8" opacity="0.5"/>
+          <line x1="3.5" y1="14" x2="8" y2="14" stroke="#15573B" stroke-width="0.8" opacity="0.5"/>
         </svg>`;
 
     item.innerHTML = `
